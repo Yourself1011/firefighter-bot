@@ -1,0 +1,12 @@
+#chip 16f18875
+
+#define LED PortA.0
+
+dir LED out
+
+do
+  LED = ON
+  wait 1 s
+  LED = OFF
+  wait 1 s
+loop
