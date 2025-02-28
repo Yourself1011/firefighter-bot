@@ -1,0 +1,66 @@
+#Chip 16f18875
+
+#Define RF PortD.3
+#Define RB PortD.2
+#Define LF PortD.0
+#Define LB PortD.1
+
+
+
+Dir RF Out
+Dir RB Out
+Dir LF Out
+Dir LB Out
+
+RF = 0
+RB = 0
+LF = 0
+LB = 0
+
+Sub stop ()
+    RF = 0
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+Sub fw ()
+    RF = 1
+    RB = 0
+    LF = 1
+    LB = 0
+End Sub
+
+Sub bw ()
+    RF = 0
+    RB = 1
+    LF = 0
+    LB = 1
+End Sub
+
+Sub turn_right ()
+    RF = 0
+    RB = 1
+    LF = 1
+    LB = 0
+End Sub
+
+Sub turn_left ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 1
+End Sub
+
+do
+    fw
+    Wait 1 s
+    bw
+    Wait 1 s
+    stop
+    Wait 1 s
+    turn_left
+    Wait 1 s
+    turn_right
+    Wait 1 s
+loop
