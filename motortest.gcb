@@ -5,12 +5,14 @@
 #Define LF PortD.0
 #Define LB PortD.1
 
-
-
 Dir RF Out
 Dir RB Out
 Dir LF Out
 Dir LB Out
+
+#define LINE PortB.5
+
+Dir LINE In
 
 RF = 0
 RB = 0
@@ -52,15 +54,11 @@ Sub turn_left ()
     LB = 1
 End Sub
 
+fw
 do
-    fw
-    Wait 1 s
-    bw
-    Wait 1 s
-    stop
-    Wait 1 s
-    turn_left
-    Wait 1 s
-    turn_right
-    Wait 1 s
+    if LINE = 1 Then
+        bw
+        wait 1 s
+        fw
+    end
 loop
