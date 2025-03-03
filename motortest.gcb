@@ -60,5 +60,5 @@ do
         bw
         wait 1 s
         fw
-    end
+    end if
 loop
