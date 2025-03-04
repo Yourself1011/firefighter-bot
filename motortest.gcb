@@ -1,4 +1,4 @@
-#Chip 16f18875
+#Chip 16f18875, 32
 
 #Define RF PortD.3
 #Define RB PortD.2
@@ -17,7 +17,7 @@ Dir LINE In
 #define LCD_IO 4
 #define LCD_RS PortB.0
 #define LCD_RW PortB.1
-#define LCD_Enable PortB.2
+#define LCD_ENABLE PortB.2
 #define LCD_D4 PortB.4
 #define LCD_D5 PortB.5
 #define LCD_D6 PortB.6
@@ -81,5 +81,7 @@ do
         wait 1 s
         GOSUB fw
     end if
+    CLS
+    Locate 0, 0
     Print "what the sigma"
 loop
