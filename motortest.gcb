@@ -10,9 +10,29 @@ Dir RB Out
 Dir LF Out
 Dir LB Out
 
-#define LINE PortB.5
+#define LINE PortA.1
 
 Dir LINE In
+
+#define LCD_IO 4
+#define LCD_RS PortB.0
+#define LCD_RW PortB.1
+#define LCD_Enable PortB.2
+#define LCD_D4 PortB.4
+#define LCD_D5 PortB.5
+#define LCD_D6 PortB.6
+#define LCD_D7 PortB.7
+#define LCD_LINES 2
+#define LCD_WIDTH 16
+#define LCD_SPEED Fast
+
+dir LCD_RS out
+dir LCD_RW out
+dir LCD_Enable out
+dir LCD_D4 out
+dir LCD_D5 out
+dir LCD_D6 out
+dir LCD_D7 out
 
 RF = 0
 RB = 0
@@ -54,11 +74,12 @@ Sub turn_left ()
     LB = 1
 End Sub
 
-fw
+GOSUB fw
 do
-    if LINE = 1 Then
-        bw
+    if LINE = 0 Then
+        GOSUB bw
         wait 1 s
-        fw
+        GOSUB fw
     end if
+    Print "what the sigma"
 loop
