@@ -1,0 +1,93 @@
+' TEJ4M Example 5 - Wall Detection
+
+' CHIP SETUP
+' Using PIC16F18875 with a 32 Mhz internal oscillator.
+' It takes 4 clock cycles to process one instruction in these PIC
+' microcontrollers so instructions execute at 8 MHz.
+#Chip 16f18875, 32
+
+' Note: pin numbers assume we are using the 40-DIP package
+' (eg. model PIC16F18875-I/P)
+
+
+' CONFIGURE WALL SENSOR INPUTS
+#Define Wall_Left_Sensor ANA2	' RA2 on pin 4
+#Define Wall_Front_Sensor ANA3	' RA1 on pin 3
+Dir PortA.2 In				' Pin for ANA2 configured as output
+Dir PortA.3 In				' Pin for ANA1 configured as output
+Dir PortA.4 In	
+Dir PortA.5 In	
+Dir PortA.6 In	
+Dir PortA.7 In	
+Dir PortE.0 In	
+Dir PortE.1 In	
+Dir PortE.2 In	
+Dir PortC.0 In	
+Dir PortC.1 In	
+Dir PortC.2 In	
+Dir PortC.3 In	
+Dir PortC.4 In	
+Dir PortC.5 In	
+Dir PortC.6 In	
+Dir PortC.7 In	
+
+' CONFIGURE LCD OUTPUT
+#Define LCD_LINES 2
+#Define LCD_WIDTH 16
+#Define LCD_IO 4
+#Define LCD_DB4 PortB.4	' RD4 on pin 27
+#Define LCD_DB5 PortB.5	' RD5 on pin 28
+#Define LCD_DB6 PortB.6	' RD6 on pin 29
+#Define LCD_DB7 PortB.7	' RD7 on pin 30
+#Define LCD_RS PortB.0	' RD0 on pin 19
+#Define LCD_RW PortB.1	' RD1 on pin 20
+#Define LCD_ENABLE PortB.2	' RD2 on pin 21
+#Define LCD_SPEED FAST	' change to SLOW if not working
+
+Dir LCD_RS Out
+Dir LCD_RW Out
+Dir LCD_ENABLE Out
+Dir LCD_DB4 Out
+Dir LCD_DB5 Out
+Dir LCD_DB6 Out
+Dir LCD_DB7 Out
+
+
+' MAIN EXECUTION LOOP
+Do Forever
+    ' read the analog value from the wall sensors (0..255)
+    Wall_Left_Value = ReadAD( Wall_Left_Sensor )
+    Wall_Front_Value = ReadAD( Wall_Front_Sensor )
+
+    ' linearize the wall sensor values
+    Wall_Left_Distance = ( (6787 / (Wall_Left_Value - 3)) - 4) / 5
+    Wall_Front_Distance = ( (6787 / (Wall_Front_Value - 3)) - 4) / 5
+
+    CLS
+
+    'print front wall distance
+    Locate 0,0
+    ' Print "Front: "
+    print ReadAD(ANA3)
+    print ReadAD(ANA4)
+    print ReadAD(ANA5)
+    print ReadAD(ANA6)
+    print ReadAD(ANA7)
+    print ReadAD(ANE0)
+    print ReadAD(ANE1)
+    print ReadAD(ANE2)
+    'Print Wall_Front_Distance
+
+    ' print left wall distance
+    Locate 1,0
+    ' Print "Left: "
+    print ReadAD(ANC0)
+    print ReadAD(ANC1)
+    print ReadAD(ANC2)
+    print ReadAD(ANC3)
+    print ReadAD(ANC4)
+    print ReadAD(ANC5)
+    print ReadAD(ANC6)
+    print ReadAD(ANC7)
+    ' Print Wall_Left_Distance
+Loop

@@ -11,17 +11,28 @@ Dir LF Out
 Dir LB Out
 
 #define LINE PortA.1
+#define FLAME ANA2
+#define WALL1 ANA3
 
 Dir LINE In
+Dir PortA.2 In
+Dir PortA.3 In
+Dir PortA.4 In
+Dim flameIn as Byte
+Dim Wall1In as Byte
+Dim Wall1Dist as Byte
+
+#define FAN PortA.5
+dir FAN out
 
 #define LCD_IO 4
 #define LCD_RS PortB.0
 #define LCD_RW PortB.1
 #define LCD_ENABLE PortB.2
-#define LCD_D4 PortB.4
-#define LCD_D5 PortB.5
-#define LCD_D6 PortB.6
-#define LCD_D7 PortB.7
+#define LCD_DB4 PortB.4
+#define LCD_DB5 PortB.5
+#define LCD_DB6 PortB.6
+#define LCD_DB7 PortB.7
 #define LCD_LINES 2
 #define LCD_WIDTH 16
 #define LCD_SPEED Fast
@@ -29,10 +40,10 @@ Dir LINE In
 dir LCD_RS out
 dir LCD_RW out
 dir LCD_Enable out
-dir LCD_D4 out
-dir LCD_D5 out
-dir LCD_D6 out
-dir LCD_D7 out
+dir LCD_DB4 out
+dir LCD_DB5 out
+dir LCD_DB6 out
+dir LCD_DB7 out
 
 RF = 0
 RB = 0
@@ -74,14 +85,32 @@ Sub turn_left ()
     LB = 1
 End Sub
 
-GOSUB fw
+
+'GOSUB fw
 do
-    if LINE = 0 Then
-        GOSUB bw
-        wait 1 s
-        GOSUB fw
-    end if
+    'if LINE = 0 Then
+    '    GOSUB bw
+   '     wait 1 s
+   '     GOSUB fw
+    'end if
+
+    Wall1In = ReadAD(WALL1) * 16
+    Wall1Dist = ( (6787 / (Wall1In - 3)) - 4) / 5
+    flameIn = ReadAD(FLAME)
+    
     CLS
     Locate 0, 0
-    Print "what the sigma"
+    Print "Flame: "
+    ' print Wall1In
+    Locate 1, 0
+    Print flameIn
+    ' Print ReadAD(WALL1)
+
+    ' if flameIn < 250 Then
+    FAN = 1
+    ' else
+    wait 5 s
+    FAN = 0
+    wait 1 s
+    ' end if
 loop
