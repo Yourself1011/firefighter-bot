@@ -176,14 +176,18 @@ SysDoLoop_S1
 	movf	FLAMEIN,W
 	movwf	LCDVALUE
 	call	PRINT113
+	movlw	225
+	subwf	FLAMEIN,W
+	btfsc	STATUS, C
+	goto	ELSE1_1
 	bsf	LATA,5
-	movlw	5
-	movwf	SysWaitTempS
-	call	Delay_S
-	bcf	LATA,5
 	movlw	1
 	movwf	SysWaitTempS
 	call	Delay_S
+	goto	ENDIF1
+ELSE1_1
+	bcf	LATA,5
+ENDIF1
 	goto	SysDoLoop_S1
 SysDoLoop_E1
 BASPROGRAMEND
@@ -484,20 +488,20 @@ DelayUS15
 	decfsz	DELAYTEMP,F
 	goto	DelayUS15
 	btfsc	PORTB,0
-	goto	ENDIF19
+	goto	ENDIF20
 	movlw	16
 	subwf	LCDBYTE,W
 	btfsc	STATUS, C
-	goto	ENDIF20
+	goto	ENDIF21
 	movf	LCDBYTE,W
 	sublw	7
 	btfsc	STATUS, C
-	goto	ENDIF21
+	goto	ENDIF22
 	movf	LCDBYTE,W
 	movwf	LCD_STATE
+ENDIF22
 ENDIF21
 ENDIF20
-ENDIF19
 	return
 
 ;********************************************************************************
@@ -521,10 +525,10 @@ FN_LCDREADY
 	call	Delay_10US
 	bsf	TRISB,7
 	btfsc	PORTB,7
-	goto	ENDIF8
+	goto	ENDIF9
 	movlw	255
 	movwf	LCDREADY
-ENDIF8
+ENDIF9
 	bcf	LATB,2
 	movlw	25
 	movwf	SysWaitTemp10US
@@ -541,12 +545,12 @@ LOCATE
 	movf	LCDLINE,W
 	sublw	1
 	btfsc	STATUS, C
-	goto	ENDIF2
+	goto	ENDIF3
 	movlw	2
 	subwf	LCDLINE,F
 	movlw	16
 	addwf	LCDCOLUMN,F
-ENDIF2
+ENDIF3
 	movf	LCDLINE,W
 	movwf	SysBYTETempA
 	movlw	64
@@ -609,7 +613,7 @@ PRINT113
 	movlw	100
 	subwf	LCDVALUE,W
 	btfss	STATUS, C
-	goto	ENDIF6
+	goto	ENDIF7
 	movf	LCDVALUE,W
 	movwf	SysBYTETempA
 	movlw	100
@@ -623,7 +627,7 @@ PRINT113
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
 	call	LCDNORMALWRITEBYTE
-ENDIF6
+ENDIF7
 	movf	LCDVALUETEMP,W
 	movwf	SysBYTETempB
 	clrf	SysBYTETempA
@@ -640,7 +644,7 @@ ENDIF6
 	iorwf	SysByteTempX,W
 	movwf	SysTemp2
 	btfss	SysTemp2,0
-	goto	ENDIF7
+	goto	ENDIF8
 	movf	LCDVALUE,W
 	movwf	SysBYTETempA
 	movlw	10
@@ -654,7 +658,7 @@ ENDIF6
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
 	call	LCDNORMALWRITEBYTE
-ENDIF7
+ENDIF8
 	movlw	48
 	addwf	LCDVALUE,W
 	movwf	LCDBYTE
@@ -1062,11 +1066,11 @@ SYSDIVSUB16
 	clrf	SysWORDTempB_H
 	call	SysCompEqual16
 	btfss	SysByteTempX,0
-	goto	ENDIF22
+	goto	ENDIF23
 	clrf	SYSWORDTEMPA
 	clrf	SYSWORDTEMPA_H
 	return
-ENDIF22
+ENDIF23
 	movlw	16
 	movwf	SYSDIVLOOP
 SYSDIV16START
@@ -1081,13 +1085,13 @@ SYSDIV16START
 	subwfb	SYSDIVMULTX_H,F
 	bsf	SYSDIVMULTA,0
 	btfsc	STATUS,C
-	goto	ENDIF23
+	goto	ENDIF24
 	bcf	SYSDIVMULTA,0
 	movf	SYSDIVMULTB,W
 	addwf	SYSDIVMULTX,F
 	movf	SYSDIVMULTB_H,W
 	addwfc	SYSDIVMULTX_H,F
-ENDIF23
+ENDIF24
 	decfsz	SYSDIVLOOP, F
 	goto	SYSDIV16START
 	movf	SYSDIVMULTA,W

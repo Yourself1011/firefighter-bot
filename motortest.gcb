@@ -106,11 +106,10 @@ do
     Print flameIn
     ' Print ReadAD(WALL1)
 
-    ' if flameIn < 250 Then
-    FAN = 1
-    ' else
-    wait 5 s
-    FAN = 0
-    wait 1 s
-    ' end if
+    if flameIn < 225 Then
+        FAN = 1
+        wait 1 s
+    else
+        FAN = 0
+    end if
 loop
