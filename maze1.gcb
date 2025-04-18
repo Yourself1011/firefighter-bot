@@ -1,0 +1,180 @@
+#Chip 16f18875, 32
+
+#Define RF PortD.3
+#Define RB PortD.2
+#Define LF PortD.0
+#Define LB PortD.1
+
+Dir RF Out
+Dir RB Out
+Dir LF Out
+Dir LB Out
+
+#define LINE PortA.1
+#define FLAME ANA2
+#define WALL1 ANA3
+#define WALL2 ANA4
+
+Dir LINE In
+Dir PortA.2 In
+Dir PortA.3 In
+Dir PortA.4 In
+Dim flameIn as Word
+Dim Wall1In as Word
+Dim Wall1Dist as Word
+Dim Wall2In as Word
+Dim Wall2Dist as Word
+
+#define FAN PortA.5
+dir FAN out
+
+#define LCD_IO 4
+#define LCD_RS PortB.0
+#define LCD_RW PortB.1
+#define LCD_Enable PortB.2
+#define LCD_DB4 PortB.4
+#define LCD_DB5 PortB.5
+#define LCD_DB6 PortB.6
+#define LCD_DB7 PortB.7
+#define LCD_LINES 2
+#define LCD_WIDTH 16
+#define LCD_SPEED Fast
+
+dir LCD_RS out
+dir LCD_RW out
+dir LCD_Enable out
+dir LCD_DB4 out
+dir LCD_DB5 out
+dir LCD_DB6 out
+dir LCD_DB7 out
+
+dim overflows as word
+overflows = 0
+
+#define TMR0_8bit
+InitTimer0 Osc, PRE0_1 + TMR0_LFINTOSC, POST0_2
+T016BIT = 0	' set TMR0 to 8-bit mode
+TMR0H = 160	' period register
+TMR0L = 0
+StartTimer 0	' start timer
+
+on interrupt Timer0Overflow call timerOverflow
+
+sub timerOverflow
+    overflows = overflows + 1
+end sub
+
+RF = 0
+RB = 0
+LF = 0
+LB = 0
+
+Sub stop ()
+    RF = 0
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+Sub fw ()
+    RF = 1
+    RB = 0
+    LF = 1
+    LB = 0
+End Sub
+
+Sub bw ()
+    RF = 0
+    RB = 1
+    LF = 0
+    LB = 1
+End Sub
+
+Sub turn_right ()
+    RF = 0
+    RB = 1
+    LF = 1
+    LB = 0
+End Sub
+
+Sub turn_left ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 1
+End Sub
+
+dim direction as String
+direction = "f"
+dim directionTime as Word
+directionTime = 0
+dim refreshTime as Word
+refreshTime = 0
+
+'GOSUB fw
+do
+    'if LINE = 0 Then
+    '    GOSUB bw
+   '     wait 1 s
+   '     GOSUB fw
+    'end if
+
+    Wall1In = ReadAD(WALL1) 
+    Wall1Dist = ( (6787 / (Wall1In - 3)) - 4) / 5
+    Wall2In = ReadAD(WALL2) 
+    Wall2Dist = ( (6787 / (Wall2In - 3)) - 4) / 5
+    flameIn = ReadAD10(FLAME)
+    
+    if refreshTime < overflows then
+        CLS
+        ' Locate 0, 0
+        ' Print "F "
+        ' Print flameIn
+        ' Locate 1, 0
+        ' Print Wall1Dist
+        ' Locate 1, 8
+        ' Print Wall2Dist
+        Locate 0, 0
+        Print direction
+        Print directionTime
+        Locate 1, 0
+        Print overflows
+        Print " "
+        Print Wall1Dist
+        Print " "
+        Print Wall2Dist
+
+        refreshTime = overflows + 10
+    end if
+
+    ' wall hug
+    if directionTime < overflows then
+        if Wall2Dist < 10 then
+            direction = "r"
+            directionTime = overflows + 100
+        else if Wall1Dist < 10 then
+            direction = "r"
+            directionTime = overflows + 50
+        else if Wall1Dist > 30 then
+            direction = "l"
+            directionTime = overflows + 50
+        else
+            direction = "f"
+            gosub fw
+        end if
+    else if direction = "r"
+        gosub turn_right
+    else if direction = "l"
+        gosub turn_left
+    else if direction = "f"
+        gosub fw
+    end if
+    
+
+    ' if flameIn < 225 Then
+    '     FAN = 1
+    '     wait 1 s
+    ' else
+    '     FAN = 0
+    ' end if
+loop

@@ -13,14 +13,17 @@ Dir LB Out
 #define LINE PortA.1
 #define FLAME ANA2
 #define WALL1 ANA3
+#define WALL2 ANA4
 
 Dir LINE In
 Dir PortA.2 In
 Dir PortA.3 In
 Dir PortA.4 In
-Dim flameIn as Byte
-Dim Wall1In as Byte
-Dim Wall1Dist as Byte
+Dim flameIn as Word
+Dim Wall1In as Word
+Dim Wall1Dist as Word
+Dim Wall2In as Word
+Dim Wall2Dist as Word
 
 #define FAN PortA.5
 dir FAN out
@@ -28,7 +31,7 @@ dir FAN out
 #define LCD_IO 4
 #define LCD_RS PortB.0
 #define LCD_RW PortB.1
-#define LCD_ENABLE PortB.2
+#define LCD_Enable PortB.2
 #define LCD_DB4 PortB.4
 #define LCD_DB5 PortB.5
 #define LCD_DB6 PortB.6
@@ -88,28 +91,26 @@ End Sub
 
 'GOSUB fw
 do
-    'if LINE = 0 Then
-    '    GOSUB bw
-   '     wait 1 s
-   '     GOSUB fw
-    'end if
-
-    Wall1In = ReadAD(WALL1) * 16
+    Wall1In = ReadAD(WALL1) 
     Wall1Dist = ( (6787 / (Wall1In - 3)) - 4) / 5
-    flameIn = ReadAD(FLAME)
+    Wall2In = ReadAD(WALL2) 
+    Wall2Dist = ( (6787 / (Wall2In - 3)) - 4) / 5
+    flameIn = ReadAD10(FLAME)
     
     CLS
     Locate 0, 0
-    Print "Flame: "
+    Print "F "
+    Print flameIn
     ' print Wall1In
     Locate 1, 0
-    Print flameIn
-    ' Print ReadAD(WALL1)
-
-    if flameIn < 225 Then
-        FAN = 1
-        wait 1 s
-    else
-        FAN = 0
-    end if
+    Print Wall1Dist
+    Locate 1, 8
+    Print Wall2Dist
+    
+    ' gosub fw
+    fan = 1
+    wait 5 s
+    fan = 0
+    ' gosub bw
+    wait 1 s
 loop

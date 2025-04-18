@@ -1,0 +1,65 @@
+#chip 16f18875
+
+' #define LCD_NO_RW
+
+#Define LCD_LINES 2
+#Define LCD_WIDTH 16
+#Define LCD_IO 4
+#Define LCD_DB4 PortB.4	
+#Define LCD_DB5 PortB.5	
+#Define LCD_DB6 PortB.6	
+#Define LCD_DB7 PortB.7	
+#Define LCD_RS PortB.0	
+#Define LCD_RW PortB.1	
+#Define LCD_ENABLE PortB.2
+#Define LCD_SPEED FAST	' change to SLOW if not working
+
+Dir LCD_RS Out
+Dir LCD_RW Out
+Dir LCD_ENABLE Out
+Dir LCD_DB4 Out
+Dir LCD_DB5 Out
+Dir LCD_DB6 Out
+Dir LCD_DB7 Out
+
+dim overflows as word
+overflows = 0
+' #define TMR0_16bit
+' ' InitTimer0 Osc, PRE0_1 + TMR0_HFINTOSC, POST0_1
+' InitTimer0 Osc, PRE0_32768 + TMR0_HFINTOSC, POST0_16
+' setTimer 0, 0
+' startTimer 0
+
+#define TMR0_8bit
+InitTimer0 Osc, PRE0_1 + TMR0_LFINTOSC, POST0_2
+T016BIT = 0	' set TMR0 to 8-bit mode
+TMR0H = 160	' period register
+TMR0L = 0
+StartTimer 0	' start timer
+
+on interrupt Timer0Overflow call timerOverflow
+
+sub timerOverflow
+    overflows = overflows + 1
+end sub
+
+dim time as word
+time = 0
+
+Do 
+    CLS
+    Locate 0, 0
+    Print "start "
+    Print time
+    Locate 1, 0
+    Print overflows
+    time = time + 1
+    wait 10 ms
+loop
+
+Do
+    CLS
+    Locate 0, 0
+    Print "among"
+    wait 1 s
+loop
