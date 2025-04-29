@@ -104,16 +104,46 @@ Sub turn_left ()
     LB = 1
 End Sub
 
+Sub slight_right ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+Sub slight_left ()
+    RF = 0
+    RB = 0
+    LF = 0
+    LB = 1
+End Sub
+
 dim direction as Byte
 direction = 1
-' stop = 0, fw = 1, bw = 2, r = 3, l = 4
+' stop = 0, fw = 1, bw = 2, r = 3, l = 4, s_r = 5 s_l = 6
 dim directionTime as Word
 directionTime = 0
 dim direction2 as Byte
 direction2 = 5
-' nothing = 5, stop = 0, fw = 1, bw = 2, r = 3, l = 4
 dim directionTime2 as Word
 directionTime2 = 0
+
+#define dirQueueLen 5
+dim directions(dirQueueLen) as Byte
+dim directionTimes(dirQueueLen) as Byte
+for i = 1 to dirQueueLen
+    directions(i) = 0
+    directionTimes(i) = 0
+next
+
+dim pointerStart as Byte
+pointerStart = 0
+dim pointerEnd as Byte
+pointerEnd = 0
+
+dim lastDirTime as Word
+lastDirTime = 0
+
 dim refreshTime as Word
 refreshTime = 0
 
@@ -128,6 +158,73 @@ dim lastFlame as Word
 lastFlame = 0
 dim maxFlame as word
 maxFlame = 0
+
+sub addDirection(direction as byte, time as byte)
+    if pointerStart = pointerEnd then
+        lastDirTime = overflows
+    end if
+    pointerEnd = (pointerEnd + 1) % dirQueueLen
+    directions(pointerEnd) = direction
+    directionTimes(pointerEnd) = time
+end sub
+
+sub move
+    if directionTimes(pointerStart) + lastDirTime > overflows then
+        pointerStart = (pointerStart + 1) % dirQueueLen
+        lastDirTime = overflows
+
+    else
+        if direction(pointerStart) = 1 then
+            gosub fw
+        else if direction(pointerStart) = 3 then
+            gosub turn_right
+        else if direction(pointerStart) = 4 then
+            gosub turn_left
+        else if direction(pointerStart) = 5 then
+            gosub slight_right
+        else if direction(pointerStart) = 6 then
+            gosub slight_left
+        end if
+    end if
+end sub
+
+// actions
+
+sub celebrate ()
+
+sub blow ()
+
+sub scanRoom ()
+    // turn left until Wall1Dist starts increasing
+    // turn 185 degrees right
+    // constant check for max flame
+    direction = 4
+
+
+Sub wallHug ()
+    if Wall1Dist > 40 then
+        direction = 4
+        directionTime = overflows + 39
+        direction2 = 1
+        directionTime2 = 50
+    else if Wall2Dist < 20 then
+        direction = 3
+        directionTime = overflows + 10
+    else if Wall1Dist < 6 then
+        direction = 3
+        directionTime = overflows + (12 - Wall1Dist) / 3
+        direction2 = 1
+        directionTime2 = 50
+    else if Wall1Dist > 22 then
+        direction = 4
+        directionTime = overflows + Wall1Dist / 5
+        direction2 = 1
+        directionTime2 = 50
+    else
+        direction = 1
+    end if
+
+End Sub
 
 'GOSUB fw
 do
