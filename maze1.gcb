@@ -104,20 +104,47 @@ Sub turn_left ()
     LB = 1
 End Sub
 
-dim direction as String
-direction = "f"
+dim direction as Byte
+direction = 1
+' stop = 0, fw = 1, bw = 2, r = 3, l = 4
 dim directionTime as Word
 directionTime = 0
+dim direction2 as Byte
+direction2 = 5
+' nothing = 5, stop = 0, fw = 1, bw = 2, r = 3, l = 4
+dim directionTime2 as Word
+directionTime2 = 0
 dim refreshTime as Word
 refreshTime = 0
 
+dim lineOn as Bit
+dim prevLineOn as Bit
+dim lineCount as Byte
+lineCount = 0
+lineOn = 1
+prevLineOn = 1
+
+dim lastFlame as Word
+lastFlame = 0
+dim maxFlame as word
+maxFlame = 0
+
 'GOSUB fw
 do
-    'if LINE = 0 Then
-    '    GOSUB bw
-   '     wait 1 s
-   '     GOSUB fw
-    'end if
+    lineOn = LINE
+    if lineOn = 0 and prevLineOn = 1 Then
+        ' catch rising edge of line
+        lineCount = lineCount + 1
+        if lineCount & 1 = 1 then
+            gosub fw
+            wait 750 ms
+            direction = 3
+            directionTime = overflows + 50
+            direction2 = 1
+            directionTime2 = 100
+        end if
+    end if
+    prevLineOn = lineOn
 
     Wall1In = ReadAD(WALL1) 
     Wall1Dist = ( (6787 / (Wall1In - 3)) - 4) / 5
@@ -127,54 +154,100 @@ do
     
     if refreshTime < overflows then
         CLS
-        ' Locate 0, 0
-        ' Print "F "
-        ' Print flameIn
-        ' Locate 1, 0
-        ' Print Wall1Dist
-        ' Locate 1, 8
-        ' Print Wall2Dist
         Locate 0, 0
-        Print direction
-        Print directionTime
+        Print "L "
+        Print lineCount
+        print " "
+        print Wall1Dist
+        print " "
+        print wall2Dist
         Locate 1, 0
-        Print overflows
-        Print " "
-        Print Wall1Dist
-        Print " "
-        Print Wall2Dist
+        print "F "
+        print flameIn
+        print "D "
+        print direction
 
         refreshTime = overflows + 10
     end if
 
     ' wall hug
-    if directionTime < overflows then
-        if Wall2Dist < 10 then
-            direction = "r"
-            directionTime = overflows + 100
-        else if Wall1Dist < 10 then
-            direction = "r"
-            directionTime = overflows + 50
-        else if Wall1Dist > 30 then
-            direction = "l"
-            directionTime = overflows + 50
+    if directionTime < overflows and direction2 = 5 then
+        if Wall1Dist > 40 then
+            direction = 4
+            directionTime = overflows + 38
+            direction2 = 1
+            directionTime2 = 60
+        else if Wall2Dist < 22 then
+            direction = 3
+            directionTime = overflows + 10
+        else if Wall1Dist < 5 then
+            direction = 3
+            directionTime = overflows + (14 - Wall1Dist) / 3
+            direction2 = 1
+            directionTime2 = 30
+        else if Wall1Dist > 20 then
+            direction = 4
+            directionTime = overflows + Wall1Dist / 3 
+            direction2 = 1
+            directionTime2 = Wall1Dist
         else
-            direction = "f"
-            gosub fw
+            direction = 1
         end if
-    else if direction = "r"
+    else if directionTime < overflows and direction2 <> 5 then
+        direction = direction2
+        directionTime = overflows + directionTime2
+        direction2 = 5
+    end if
+
+    if direction = 3 then
         gosub turn_right
-    else if direction = "l"
+    else if direction = 4 then
         gosub turn_left
-    else if direction = "f"
+    else if direction = 1 then
         gosub fw
     end if
     
 
-    ' if flameIn < 225 Then
-    '     FAN = 1
-    '     wait 1 s
-    ' else
-    '     FAN = 0
-    ' end if
+    if flameIn < 20 and Wall2Dist < 30 then
+        fan = 1
+        CLS
+        Locate 0, 0
+        Print "EXTINGUISHING"
+        Locate 1, 0
+        Print flameIn
+        do until flameIn > 800 
+            gosub turn_right
+            wait 100 ms
+            gosub turn_left
+            wait 100 ms
+            flameIn = ReadAD10(FLAME)
+            CLS
+            Locate 0, 0
+            Print "EXTINGUISHING"
+            Locate 1, 0
+            Print flameIn
+        loop
+        wait 3 s
+
+        fan = 0
+        CLS
+        Locate 0, 0
+        Print "#1 VICTORY ROYALE"
+        gosub turn_right
+        wait 1 s
+        gosub stop
+        EXIT Do
+    else if flameIn < 500 and lineCount & 1 = 1 Then
+        ' if flameIn > maxFlame then
+            maxFlame = flameIn
+            lastFlame = flameIn
+            ' direction = 1
+            directionTime = overflows
+            ' direction2 = 5
+        ' else if flameIn - 10 < maxFlame
+            
+        ' end if
+    else
+        fan = 0
+    end if
 loop
