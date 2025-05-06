@@ -20,38 +20,47 @@ ADREADPORT	EQU	32
 DELAYTEMP	EQU	112
 DELAYTEMP2	EQU	113
 DIRECTION	EQU	33
-DIRECTION2	EQU	34
-DIRECTIONTIME	EQU	35
-DIRECTIONTIME2	EQU	37
-DIRECTIONTIME2_H	EQU	38
-DIRECTIONTIME_H	EQU	36
-FLAMEIN	EQU	39
-FLAMEIN_H	EQU	40
-LASTFLAME	EQU	41
-LASTFLAME_H	EQU	42
-LCDBYTE	EQU	43
-LCDCOLUMN	EQU	44
-LCDLINE	EQU	45
-LCDREADY	EQU	46
-LCDVALUE	EQU	47
-LCDVALUETEMP	EQU	49
-LCDVALUE_H	EQU	48
-LCD_STATE	EQU	50
-LINECOUNT	EQU	51
-MAXFLAME	EQU	52
-MAXFLAME_H	EQU	53
-OVERFLOWS	EQU	54
-OVERFLOWS_H	EQU	55
-PRINTLEN	EQU	56
-READAD	EQU	57
-READAD10	EQU	58
-READAD10_H	EQU	59
-REFRESHTIME	EQU	60
-REFRESHTIME_H	EQU	61
-SAVEPCLATH	EQU	62
-STRINGPOINTER	EQU	63
-SYSBITVAR0	EQU	64
-SYSBSR	EQU	65
+DIRECTIONS	EQU	9194
+DIRECTIONTIMES	EQU	9188
+FLAMECD	EQU	34
+FLAMECD_H	EQU	35
+FLAMEIN	EQU	36
+FLAMEIN_H	EQU	37
+I	EQU	38
+IMMUNE	EQU	39
+LASTDIRTIME	EQU	40
+LASTDIRTIME_H	EQU	41
+LASTFLAME	EQU	42
+LASTFLAME_H	EQU	43
+LCDBYTE	EQU	44
+LCDCOLUMN	EQU	45
+LCDLINE	EQU	46
+LCDREADY	EQU	47
+LCDVALUE	EQU	48
+LCDVALUETEMP	EQU	50
+LCDVALUE_H	EQU	49
+LCD_STATE	EQU	51
+LINECOUNT	EQU	52
+MAXFLAME	EQU	53
+MAXFLAME_H	EQU	54
+MINWALL	EQU	55
+MINWALL_H	EQU	56
+OVERFLOWS	EQU	57
+OVERFLOWS_H	EQU	58
+POINTEREND	EQU	59
+POINTERSTART	EQU	60
+PRINTLEN	EQU	61
+READAD	EQU	62
+READAD10	EQU	63
+READAD10_H	EQU	65
+REFRESHTIME	EQU	66
+REFRESHTIME_H	EQU	67
+SAVEPCLATH	EQU	68
+SEARCHCD	EQU	69
+SEARCHCD_H	EQU	70
+STRINGPOINTER	EQU	71
+SYSBITVAR0	EQU	72
+SYSBSR	EQU	73
 SYSBYTETEMPA	EQU	117
 SYSBYTETEMPB	EQU	121
 SYSBYTETEMPX	EQU	112
@@ -64,20 +73,19 @@ SYSDIVMULTB	EQU	123
 SYSDIVMULTB_H	EQU	124
 SYSDIVMULTX	EQU	114
 SYSDIVMULTX_H	EQU	115
-SYSLCDTEMP	EQU	66
-SYSPRINTDATAHANDLER	EQU	67
-SYSPRINTDATAHANDLER_H	EQU	68
-SYSPRINTTEMP	EQU	69
-SYSREPEATTEMP1	EQU	70
+SYSLCDTEMP	EQU	74
+SYSPRINTDATAHANDLER	EQU	75
+SYSPRINTDATAHANDLER_H	EQU	76
+SYSPRINTTEMP	EQU	77
+SYSREPEATTEMP1	EQU	78
 SYSSTATUS	EQU	127
 SYSSTRINGA	EQU	119
 SYSSTRINGA_H	EQU	120
-SYSTEMP1	EQU	71
-SYSTEMP1_H	EQU	72
-SYSTEMP2	EQU	73
-SYSTEMP2_H	EQU	74
-SYSTEMP3	EQU	75
-SYSTEMP3_H	EQU	76
+SYSTEMP1	EQU	79
+SYSTEMP1_H	EQU	80
+SYSTEMP2	EQU	81
+SYSTEMP2_H	EQU	82
+SYSTEMP3	EQU	83
 SYSW	EQU	126
 SYSWAITTEMP10US	EQU	117
 SYSWAITTEMPMS	EQU	114
@@ -91,27 +99,28 @@ SYSWORDTEMPB	EQU	121
 SYSWORDTEMPB_H	EQU	122
 SYSWORDTEMPX	EQU	112
 SYSWORDTEMPX_H	EQU	113
-TMRNUMBER	EQU	77
-TMRPOST	EQU	78
-TMRPRES	EQU	79
-TMRSOURCE	EQU	80
-WALL1DIST	EQU	81
-WALL1DIST_H	EQU	82
-WALL1IN	EQU	83
-WALL1IN_H	EQU	84
-WALL2DIST	EQU	85
-WALL2DIST_H	EQU	86
-WALL2IN	EQU	87
-WALL2IN_H	EQU	88
+TIME	EQU	84
+TMRNUMBER	EQU	85
+TMRPOST	EQU	86
+TMRPRES	EQU	87
+TMRSOURCE	EQU	88
+WALL1DIST	EQU	89
+WALL1DIST_H	EQU	90
+WALL1IN	EQU	91
+WALL1IN_H	EQU	92
+WALL2DIST	EQU	93
+WALL2DIST_H	EQU	94
+WALL2IN	EQU	95
+WALL2IN_H	EQU	96
 
 ;********************************************************************************
 
 ;Alias variables
 AFSR0	EQU	4
 AFSR0_H	EQU	5
-SYSREADAD10WORD	EQU	58
-SYSREADAD10WORD_H	EQU	59
-SYSREADADBYTE	EQU	57
+SYSREADAD10WORD	EQU	63
+SYSREADAD10WORD_H	EQU	65
+SYSREADADBYTE	EQU	62
 
 ;********************************************************************************
 
@@ -142,7 +151,9 @@ Interrupt
 	btfss	PIR0,TMR0IF
 	goto	NotTMR0IF
 	banksel	STATUS
+	pagesel	TIMEROVERFLOW
 	call	TIMEROVERFLOW
+	pagesel	$
 	banksel	PIR0
 	bcf	PIR0,TMR0IF
 	goto	INTERRUPTDONE
@@ -165,7 +176,7 @@ INTERRUPTDONE
 ;********************************************************************************
 
 ;Start of program memory page 0
-	ORG	34
+	ORG	36
 BASPROGRAMSTART
 ;Call initialisation routines
 	call	INITSYS
@@ -199,7 +210,9 @@ BASPROGRAMSTART
 	movwf	TMRPRES
 	movlw	1
 	movwf	TMRPOST
-	call	INITTIMER0158
+	pagesel	INITTIMER0171
+	call	INITTIMER0171
+	pagesel	$
 	bcf	T0CON0,T016BIT
 	movlw	160
 	movwf	TMR0H
@@ -213,14 +226,6 @@ BASPROGRAMSTART
 	bcf	LATD,2
 	bcf	LATD,0
 	bcf	LATD,1
-	movlw	1
-	movwf	DIRECTION
-	clrf	DIRECTIONTIME
-	clrf	DIRECTIONTIME_H
-	movlw	5
-	movwf	DIRECTION2
-	clrf	DIRECTIONTIME2
-	clrf	DIRECTIONTIME2_H
 	clrf	REFRESHTIME
 	clrf	REFRESHTIME_H
 	clrf	LINECOUNT
@@ -228,8 +233,56 @@ BASPROGRAMSTART
 	bsf	SYSBITVAR0,1
 	clrf	LASTFLAME
 	clrf	LASTFLAME_H
-	clrf	MAXFLAME
-	clrf	MAXFLAME_H
+	movlw	255
+	movwf	MAXFLAME
+	movwf	MAXFLAME_H
+	bcf	SYSBITVAR0,2
+	clrf	SEARCHCD
+	clrf	SEARCHCD_H
+	clrf	FLAMECD
+	clrf	FLAMECD_H
+	clrf	I
+SysForLoop1
+	incf	I,F
+	movlw	low(DIRECTIONS)
+	addwf	I,W
+	movwf	AFSR0
+	clrf	SysTemp1
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp1,W
+	movwf	AFSR0_H
+	clrf	INDF0
+	movlw	low(DIRECTIONTIMES)
+	addwf	I,W
+	movwf	AFSR0
+	clrf	SysTemp1
+	movlw	high(DIRECTIONTIMES)
+	addwfc	SysTemp1,W
+	movwf	AFSR0_H
+	clrf	INDF0
+	movlw	5
+	subwf	I,W
+	btfss	STATUS, C
+	goto	SysForLoop1
+SysForLoopEnd1
+	movlw	1
+	movwf	POINTERSTART
+	movlw	1
+	movwf	POINTEREND
+	clrf	LASTDIRTIME
+	clrf	LASTDIRTIME_H
+	bsf	SYSBITVAR0,3
+	bcf	SYSBITVAR0,4
+	movlw	255
+	movwf	MINWALL
+	movwf	MINWALL_H
+	clrf	IMMUNE
+	movlw	10
+	movwf	SysWaitTempMS
+	clrf	SysWaitTempMS_H
+	pagesel	Delay_MS
+	call	Delay_MS
+	pagesel	$
 SysDoLoop_S1
 	bcf	SYSBITVAR0,0
 	btfsc	PORTA,1
@@ -246,129 +299,25 @@ SysDoLoop_S1
 	andwf	SysByteTempX,W
 	movwf	SysTemp2
 	btfss	SysTemp2,0
-	goto	ENDIF1
+	goto	ENDIF2
 	incf	LINECOUNT,F
 	movf	LINECOUNT,W
 	movwf	SysTemp1
 	btfss	SysTemp1,0
-	goto	ENDIF6
-	call	FW
-	movlw	238
-	movwf	SysWaitTempMS
-	movlw	2
-	movwf	SysWaitTempMS_H
-	call	Delay_MS
-	movlw	3
-	movwf	DIRECTION
-	movlw	50
+	goto	ENDIF7
+	bcf	SYSBITVAR0,3
+	movlw	75
 	addwf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
+	movwf	SEARCHCD
 	movlw	0
 	addwfc	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
-	movlw	1
-	movwf	DIRECTION2
-	movlw	100
-	movwf	DIRECTIONTIME2
-	clrf	DIRECTIONTIME2_H
-ENDIF6
-ENDIF1
+	movwf	SEARCHCD_H
+ENDIF7
+ENDIF2
 	bcf	SYSBITVAR0,1
 	btfsc	SYSBITVAR0,0
 	bsf	SYSBITVAR0,1
-	movlw	3
-	movwf	ADREADPORT
-	call	FN_READAD8
-	movf	SYSREADADBYTE,W
-	movwf	WALL1IN
-	clrf	WALL1IN_H
-	movlw	3
-	subwf	WALL1IN,W
-	movwf	SysTemp1
-	movlw	0
-	subwfb	WALL1IN_H,W
-	movwf	SysTemp1_H
-	movlw	131
-	movwf	SysWORDTempA
-	movlw	26
-	movwf	SysWORDTempA_H
-	movf	SysTemp1,W
-	movwf	SysWORDTempB
-	movf	SysTemp1_H,W
-	movwf	SysWORDTempB_H
-	call	SysDivSub16
-	movf	SysWORDTempA,W
-	movwf	SysTemp2
-	movf	SysWORDTempA_H,W
-	movwf	SysTemp2_H
-	movlw	4
-	subwf	SysTemp2,W
-	movwf	SysTemp1
-	movlw	0
-	subwfb	SysTemp2_H,W
-	movwf	SysTemp1_H
-	movf	SysTemp1,W
-	movwf	SysWORDTempA
-	movf	SysTemp1_H,W
-	movwf	SysWORDTempA_H
-	movlw	5
-	movwf	SysWORDTempB
-	clrf	SysWORDTempB_H
-	call	SysDivSub16
-	movf	SysWORDTempA,W
-	movwf	WALL1DIST
-	movf	SysWORDTempA_H,W
-	movwf	WALL1DIST_H
-	movlw	4
-	movwf	ADREADPORT
-	call	FN_READAD8
-	movf	SYSREADADBYTE,W
-	movwf	WALL2IN
-	clrf	WALL2IN_H
-	movlw	3
-	subwf	WALL2IN,W
-	movwf	SysTemp1
-	movlw	0
-	subwfb	WALL2IN_H,W
-	movwf	SysTemp1_H
-	movlw	131
-	movwf	SysWORDTempA
-	movlw	26
-	movwf	SysWORDTempA_H
-	movf	SysTemp1,W
-	movwf	SysWORDTempB
-	movf	SysTemp1_H,W
-	movwf	SysWORDTempB_H
-	call	SysDivSub16
-	movf	SysWORDTempA,W
-	movwf	SysTemp2
-	movf	SysWORDTempA_H,W
-	movwf	SysTemp2_H
-	movlw	4
-	subwf	SysTemp2,W
-	movwf	SysTemp1
-	movlw	0
-	subwfb	SysTemp2_H,W
-	movwf	SysTemp1_H
-	movf	SysTemp1,W
-	movwf	SysWORDTempA
-	movf	SysTemp1_H,W
-	movwf	SysWORDTempA_H
-	movlw	5
-	movwf	SysWORDTempB
-	clrf	SysWORDTempB_H
-	call	SysDivSub16
-	movf	SysWORDTempA,W
-	movwf	WALL2DIST
-	movf	SysWORDTempA_H,W
-	movwf	WALL2DIST_H
-	movlw	2
-	movwf	ADREADPORT
-	call	FN_READAD1010
-	movf	SYSREADAD10WORD,W
-	movwf	FLAMEIN
-	movf	SYSREADAD10WORD_H,W
-	movwf	FLAMEIN_H
+	call	MAKEREADINGS
 	movf	REFRESHTIME,W
 	movwf	SysWORDTempA
 	movf	REFRESHTIME_H,W
@@ -377,91 +326,24 @@ ENDIF1
 	movwf	SysWORDTempB
 	movf	OVERFLOWS_H,W
 	movwf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	btfss	SysByteTempX,0
-	goto	ENDIF2
-	call	CLS
-	clrf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movlw	low StringTable1
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable1) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movf	LINECOUNT,W
-	movwf	LCDVALUE
-	call	PRINT114
-	movlw	low StringTable2
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable2) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movf	WALL1DIST,W
-	movwf	LCDVALUE
-	movf	WALL1DIST_H,W
-	movwf	LCDVALUE_H
-	call	PRINT115
-	movlw	low StringTable2
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable2) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movf	WALL2DIST,W
-	movwf	LCDVALUE
-	movf	WALL2DIST_H,W
-	movwf	LCDVALUE_H
-	call	PRINT115
-	movlw	1
-	movwf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movlw	low StringTable3
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable3) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movf	FLAMEIN,W
-	movwf	LCDVALUE
-	movf	FLAMEIN_H,W
-	movwf	LCDVALUE_H
-	call	PRINT115
-	movlw	low StringTable4
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable4) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movf	DIRECTION,W
-	movwf	LCDVALUE
-	call	PRINT114
+	goto	ENDIF3
+	call	PRINTDEBUG
+	pagesel	$
 	movlw	10
 	addwf	OVERFLOWS,W
 	movwf	REFRESHTIME
 	movlw	0
 	addwfc	OVERFLOWS_H,W
 	movwf	REFRESHTIME_H
-ENDIF2
-	movf	DIRECTIONTIME,W
-	movwf	SysWORDTempA
-	movf	DIRECTIONTIME_H,W
-	movwf	SysWORDTempA_H
-	movf	OVERFLOWS,W
-	movwf	SysWORDTempB
-	movf	OVERFLOWS_H,W
-	movwf	SysWORDTempB_H
-	call	SysCompLessThan16
-	movf	SysByteTempX,W
-	movwf	SysTemp1
-	movf	DIRECTION2,W
-	movwf	SysBYTETempA
-	movlw	5
-	movwf	SysBYTETempB
-	call	SysCompEqual
-	movf	SysTemp1,W
-	andwf	SysByteTempX,W
-	movwf	SysTemp2
-	btfss	SysTemp2,0
-	goto	ELSE3_1
+ENDIF3
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	btfsc	STATUS, Z
+	call	WALLHUG
 	movf	WALL1DIST,W
 	movwf	SysWORDTempB
 	movf	WALL1DIST_H,W
@@ -469,318 +351,116 @@ ENDIF2
 	movlw	40
 	movwf	SysWORDTempA
 	clrf	SysWORDTempA_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	btfss	SysByteTempX,0
-	goto	ELSE7_1
-	movlw	4
-	movwf	DIRECTION
-	movlw	35
-	addwf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
-	movlw	0
-	addwfc	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
+	goto	ELSE5_1
 	movlw	1
-	movwf	DIRECTION2
-	movlw	60
-	movwf	DIRECTIONTIME2
-	clrf	DIRECTIONTIME2_H
-	goto	ENDIF7
-ELSE7_1
-	movf	WALL2DIST,W
-	movwf	SysWORDTempA
-	movf	WALL2DIST_H,W
-	movwf	SysWORDTempA_H
-	movlw	22
-	movwf	SysWORDTempB
-	clrf	SysWORDTempB_H
-	call	SysCompLessThan16
-	btfss	SysByteTempX,0
-	goto	ELSE7_2
-	movlw	3
 	movwf	DIRECTION
 	movlw	10
-	addwf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
-	movlw	0
-	addwfc	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
-	goto	ENDIF7
-ELSE7_2
-	movf	WALL1DIST,W
-	movwf	SysWORDTempA
-	movf	WALL1DIST_H,W
-	movwf	SysWORDTempA_H
-	movlw	5
-	movwf	SysWORDTempB
-	clrf	SysWORDTempB_H
-	call	SysCompLessThan16
-	btfss	SysByteTempX,0
-	goto	ELSE7_3
-	movlw	3
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	movlw	7
 	movwf	DIRECTION
-	movf	WALL1DIST,W
-	sublw	14
-	movwf	SysTemp1
-	clrf	SysTemp2
-	movf	WALL1DIST_H,W
-	subwfb	SysTemp2,W
-	movwf	SysTemp1_H
-	movf	SysTemp1,W
-	movwf	SysWORDTempA
-	movf	SysTemp1_H,W
-	movwf	SysWORDTempA_H
-	movlw	3
-	movwf	SysWORDTempB
-	clrf	SysWORDTempB_H
-	call	SysDivSub16
-	movf	SysWORDTempA,W
-	addwf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
-	movf	SysWORDTempA_H,W
-	addwfc	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
+	movlw	5
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	movlw	4
+	movwf	DIRECTION
+	movlw	40
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
 	movlw	1
-	movwf	DIRECTION2
-	movlw	30
-	movwf	DIRECTIONTIME2
-	clrf	DIRECTIONTIME2_H
-	goto	ENDIF7
-ELSE7_3
-	movf	WALL1DIST,W
-	movwf	SysWORDTempB
-	movf	WALL1DIST_H,W
-	movwf	SysWORDTempB_H
+	movwf	DIRECTION
+	movlw	60
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	goto	ENDIF5
+ELSE5_1
+	movf	WALL2DIST,W
+	movwf	SysWORDTempA
+	movf	WALL2DIST_H,W
+	movwf	SysWORDTempA_H
 	movlw	20
-	movwf	SysWORDTempA
-	clrf	SysWORDTempA_H
-	call	SysCompLessThan16
-	btfss	SysByteTempX,0
-	goto	ELSE7_4
-	movlw	4
-	movwf	DIRECTION
-	movf	WALL1DIST,W
-	movwf	SysWORDTempA
-	movf	WALL1DIST_H,W
-	movwf	SysWORDTempA_H
-	movlw	3
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
-	call	SysDivSub16
-	movf	SysWORDTempA,W
-	addwf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
-	movf	SysWORDTempA_H,W
-	addwfc	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
-	movlw	1
-	movwf	DIRECTION2
-	movf	WALL1DIST,W
-	movwf	DIRECTIONTIME2
-	movf	WALL1DIST_H,W
-	movwf	DIRECTIONTIME2_H
-	goto	ENDIF7
-ELSE7_4
-	movlw	1
-	movwf	DIRECTION
-ENDIF7
-	goto	ENDIF3
-ELSE3_1
-	movf	DIRECTIONTIME,W
-	movwf	SysWORDTempA
-	movf	DIRECTIONTIME_H,W
-	movwf	SysWORDTempA_H
-	movf	OVERFLOWS,W
-	movwf	SysWORDTempB
-	movf	OVERFLOWS_H,W
-	movwf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
-	movf	SysByteTempX,W
-	movwf	SysTemp1
-	movf	DIRECTION2,W
-	movwf	SysBYTETempA
-	movlw	5
-	movwf	SysBYTETempB
-	call	SysCompEqual
-	comf	SysByteTempX,F
-	movf	SysTemp1,W
-	andwf	SysByteTempX,W
-	movwf	SysTemp2
-	btfss	SysTemp2,0
-	goto	ENDIF3
-	movf	DIRECTION2,W
+	pagesel	$
+	btfss	SysByteTempX,0
+	goto	ENDIF5
+	movlw	1
 	movwf	DIRECTION
-	movf	DIRECTIONTIME2,W
-	addwf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
-	movf	DIRECTIONTIME2_H,W
-	addwfc	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
+	movlw	10
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	movlw	7
+	movwf	DIRECTION
 	movlw	5
-	movwf	DIRECTION2
-ENDIF3
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
 	movlw	3
-	subwf	DIRECTION,W
-	btfss	STATUS, Z
-	goto	ELSE4_1
-	call	TURN_RIGHT
-	goto	ENDIF4
-ELSE4_1
-	movlw	4
-	subwf	DIRECTION,W
-	btfss	STATUS, Z
-	goto	ELSE4_2
-	call	TURN_LEFT
-	goto	ENDIF4
-ELSE4_2
-	decf	DIRECTION,W
-	btfsc	STATUS, Z
-	call	FW
-ENDIF4
+	movwf	DIRECTION
+	movlw	40
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	movlw	1
+	movwf	DIRECTION
+	movlw	60
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+ENDIF5
+	call	MOVE
 	movf	FLAMEIN,W
 	movwf	SysWORDTempA
 	movf	FLAMEIN_H,W
 	movwf	SysWORDTempA_H
-	movlw	20
+	movlw	25
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	movf	SysByteTempX,W
 	movwf	SysTemp1
 	movf	WALL2DIST,W
 	movwf	SysWORDTempA
 	movf	WALL2DIST_H,W
 	movwf	SysWORDTempA_H
-	movlw	30
+	movlw	20
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	movf	SysTemp1,W
 	andwf	SysByteTempX,W
 	movwf	SysTemp2
 	btfss	SysTemp2,0
-	goto	ELSE5_1
-	bsf	LATA,5
-	call	CLS
-	clrf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movlw	low StringTable5
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable5) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movlw	1
-	movwf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movf	FLAMEIN,W
-	movwf	LCDVALUE
-	movf	FLAMEIN_H,W
-	movwf	LCDVALUE_H
-	call	PRINT115
-SysDoLoop_S2
-	movf	flamein,W
-	movwf	SysWORDTempB
-	movf	flamein_H,W
-	movwf	SysWORDTempB_H
-	movlw	32
-	movwf	SysWORDTempA
-	movlw	3
-	movwf	SysWORDTempA_H
-	call	SysCompLessThan16
-	btfsc	SysByteTempX,0
-	goto	SysDoLoop_E2
-	call	TURN_RIGHT
-	movlw	100
-	movwf	SysWaitTempMS
-	clrf	SysWaitTempMS_H
-	call	Delay_MS
-	call	TURN_LEFT
-	movlw	100
-	movwf	SysWaitTempMS
-	clrf	SysWaitTempMS_H
-	call	Delay_MS
-	movlw	2
-	movwf	ADREADPORT
-	call	FN_READAD1010
-	movf	SYSREADAD10WORD,W
-	movwf	FLAMEIN
-	movf	SYSREADAD10WORD_H,W
-	movwf	FLAMEIN_H
-	call	CLS
-	clrf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movlw	low StringTable5
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable5) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	movlw	1
-	movwf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movf	FLAMEIN,W
-	movwf	LCDVALUE
-	movf	FLAMEIN_H,W
-	movwf	LCDVALUE_H
-	call	PRINT115
-	goto	SysDoLoop_S2
-SysDoLoop_E2
-	movlw	3
-	movwf	SysWaitTempS
-	call	Delay_S
-	bcf	LATA,5
-	call	CLS
-	clrf	LCDLINE
-	clrf	LCDCOLUMN
-	call	LOCATE
-	movlw	low StringTable6
-	movwf	SysPRINTDATAHandler
-	movlw	(high StringTable6) | 128
-	movwf	SysPRINTDATAHandler_H
-	call	PRINT113
-	call	TURN_RIGHT
-	movlw	1
-	movwf	SysWaitTempS
-	call	Delay_S
-	call	STOP
+	goto	ELSE6_1
+	call	BLOW
 	goto	SysDoLoop_E1
-	goto	ENDIF5
-ELSE5_1
-	movf	FLAMEIN,W
-	movwf	SysWORDTempA
-	movf	FLAMEIN_H,W
-	movwf	SysWORDTempA_H
-	movlw	244
-	movwf	SysWORDTempB
-	movlw	1
-	movwf	SysWORDTempB_H
-	call	SysCompLessThan16
-	movf	SysByteTempX,W
-	movwf	SysTemp1
-	andwf	LINECOUNT,W
-	movwf	SysTemp2
-	movwf	SysTemp1
-	btfss	SysTemp1,0
-	goto	ELSE5_2
-	movf	FLAMEIN,W
-	movwf	MAXFLAME
-	movf	FLAMEIN_H,W
-	movwf	MAXFLAME_H
-	movf	FLAMEIN,W
-	movwf	LASTFLAME
-	movf	FLAMEIN_H,W
-	movwf	LASTFLAME_H
-	movf	OVERFLOWS,W
-	movwf	DIRECTIONTIME
-	movf	OVERFLOWS_H,W
-	movwf	DIRECTIONTIME_H
-	goto	ENDIF5
-ELSE5_2
+	goto	ENDIF6
+ELSE6_1
 	bcf	LATA,5
-ENDIF5
+ENDIF6
 	goto	SysDoLoop_S1
 SysDoLoop_E1
 BASPROGRAMEND
@@ -789,78 +469,256 @@ BASPROGRAMEND
 
 ;********************************************************************************
 
-CLS
-	bcf	LATB,0
+BLOW
+	bsf	LATA,5
+	pagesel	CLS
+	call	CLS
+	pagesel	$
+	clrf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movlw	low StringTable1
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable1) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	$
 	movlw	1
-	movwf	LCDBYTE
-	call	LCDNORMALWRITEBYTE
+	movwf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movf	FLAMEIN,W
+	movwf	LCDVALUE
+	movf	FLAMEIN_H,W
+	movwf	LCDVALUE_H
+	call	PRINT128
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movlw	3
+	movwf	INDF0
+	movf	FLAMEIN,W
+	movwf	MAXFLAME
+	movf	FLAMEIN_H,W
+	movwf	MAXFLAME_H
+SysDoLoop_S2
+	movf	overflows,W
+	movwf	SysWORDTempB
+	movf	overflows_H,W
+	movwf	SysWORDTempB_H
+	movf	flamecd,W
+	movwf	SysWORDTempA
+	movf	flamecd_H,W
+	movwf	SysWORDTempA_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	movf	SysByteTempX,W
+	movwf	SysTemp2
+	movf	flamein,W
+	movwf	SysWORDTempB
+	movf	flamein_H,W
+	movwf	SysWORDTempB_H
+	movlw	32
+	movwf	SysWORDTempA
+	movlw	3
+	movwf	SysWORDTempA_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	movf	SysTemp2,W
+	andwf	SysByteTempX,W
+	movwf	SysTemp3
+	btfsc	SysTemp3,0
+	goto	SysDoLoop_E2
+	movlw	2
+	movwf	ADREADPORT
+	call	FN_READAD1023
+	movf	SYSREADAD10WORD,W
+	movwf	FLAMEIN
+	movf	SYSREADAD10WORD_H,W
+	movwf	FLAMEIN_H
+	pagesel	FN_FLAMECHECK
+	call	FN_FLAMECHECK
+	pagesel	$
+	btfss	SYSBITVAR0,5
+	goto	ELSE13_1
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movlw	3
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE15_1
+	pagesel	TURN_RIGHT
+	call	TURN_RIGHT
+	pagesel	$
+	goto	ENDIF15
+ELSE15_1
+	pagesel	TURN_LEFT
+	call	TURN_LEFT
+	pagesel	$
+ENDIF15
+	goto	ENDIF13
+ELSE13_1
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movlw	3
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE16_1
+	pagesel	TURN_LEFT
+	call	TURN_LEFT
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
 	movlw	4
+	movwf	INDF0
+	goto	ENDIF16
+ELSE16_1
+	pagesel	TURN_RIGHT
+	call	TURN_RIGHT
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movlw	3
+	movwf	INDF0
+ENDIF16
+	movf	FLAMEIN,W
+	movwf	MAXFLAME
+	movf	FLAMEIN_H,W
+	movwf	MAXFLAME_H
+ENDIF13
+	pagesel	CLS
+	call	CLS
+	pagesel	$
+	clrf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movlw	low StringTable1
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable1) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	$
+	movlw	1
+	movwf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movf	FLAMEIN,W
+	movwf	LCDVALUE
+	movf	FLAMEIN_H,W
+	movwf	LCDVALUE_H
+	call	PRINT128
+	pagesel	$
+	movf	FLAMEIN,W
+	movwf	SysWORDTempB
+	movf	FLAMEIN_H,W
+	movwf	SysWORDTempB_H
+	movlw	32
+	movwf	SysWORDTempA
+	movlw	3
+	movwf	SysWORDTempA_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	movf	SysByteTempX,W
+	movwf	SysTemp2
+	movf	FLAMECD,W
+	movwf	SysWORDTempA
+	movf	FLAMECD_H,W
+	movwf	SysWORDTempA_H
+	clrf	SysWORDTempB
+	clrf	SysWORDTempB_H
+	pagesel	SysCompEqual16
+	call	SysCompEqual16
+	pagesel	$
+	movf	SysTemp2,W
+	andwf	SysByteTempX,W
+	movwf	SysTemp3
+	btfss	SysTemp3,0
+	goto	ENDIF14
+	movlw	44
+	addwf	OVERFLOWS,W
+	movwf	FLAMECD
+	movlw	1
+	addwfc	OVERFLOWS_H,W
+	movwf	FLAMECD_H
+ENDIF14
+	movlw	20
 	movwf	SysWaitTempMS
 	clrf	SysWaitTempMS_H
+	pagesel	Delay_MS
 	call	Delay_MS
-	movlw	128
-	movwf	LCDBYTE
-	call	LCDNORMALWRITEBYTE
-	movlw	12
-	movwf	SysWaitTemp10US
-	goto	Delay_10US
-
-;********************************************************************************
-
-Delay_10US
-D10US_START
-	movlw	25
-	movwf	DELAYTEMP
-DelayUS0
-	decfsz	DELAYTEMP,F
-	goto	DelayUS0
-	nop
-	decfsz	SysWaitTemp10US, F
-	goto	D10US_START
-	return
-
-;********************************************************************************
-
-Delay_MS
-	incf	SysWaitTempMS_H, F
-DMS_START
-	movlw	14
-	movwf	DELAYTEMP2
-DMS_OUTER
-	movlw	189
-	movwf	DELAYTEMP
-DMS_INNER
-	decfsz	DELAYTEMP, F
-	goto	DMS_INNER
-	decfsz	DELAYTEMP2, F
-	goto	DMS_OUTER
-	decfsz	SysWaitTempMS, F
-	goto	DMS_START
-	decfsz	SysWaitTempMS_H, F
-	goto	DMS_START
-	return
-
-;********************************************************************************
-
-Delay_S
-DS_START
-	movlw	232
+	pagesel	$
+	call	STOP
+	movlw	1
+	movwf	SysWaitTempS
+	pagesel	Delay_S
+	call	Delay_S
+	pagesel	$
+	goto	SysDoLoop_S2
+SysDoLoop_E2
+	bcf	LATA,5
+	pagesel	CLS
+	call	CLS
+	pagesel	$
+	clrf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movlw	low StringTable2
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable2) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	TURN_RIGHT
+	call	TURN_RIGHT
+	pagesel	$
+	movlw	244
 	movwf	SysWaitTempMS
-	movlw	3
+	movlw	1
 	movwf	SysWaitTempMS_H
+	pagesel	Delay_MS
 	call	Delay_MS
-	decfsz	SysWaitTempS, F
-	goto	DS_START
-	return
-
-;********************************************************************************
-
-FW
-	bsf	LATD,3
-	bcf	LATD,2
-	bsf	LATD,0
-	bcf	LATD,1
-	return
+	pagesel	$
+	goto	STOP
 
 ;********************************************************************************
 
@@ -871,9 +729,13 @@ INITLCD
 	movlw	10
 	movwf	SysWaitTempMS
 	clrf	SysWaitTempMS_H
+	pagesel	Delay_MS
 	call	Delay_MS
+	pagesel	$
 SysWaitLoop3
+	pagesel	FN_LCDREADY
 	call	FN_LCDREADY
+	pagesel	$
 	movf	LCDREADY,F
 	btfsc	STATUS,Z
 	goto	SysWaitLoop3
@@ -886,7 +748,9 @@ SysWaitLoop3
 	movlw	15
 	movwf	SysWaitTempMS
 	clrf	SysWaitTempMS_H
+	pagesel	Delay_MS
 	call	Delay_MS
+	pagesel	$
 	bsf	LATB,4
 	bsf	LATB,5
 	bcf	LATB,6
@@ -906,7 +770,9 @@ DelayUS2
 	movlw	5
 	movwf	SysWaitTempMS
 	clrf	SysWaitTempMS_H
+	pagesel	Delay_MS
 	call	Delay_MS
+	pagesel	$
 	movlw	3
 	movwf	SysRepeatTemp1
 SysRepeatLoop1
@@ -937,7 +803,9 @@ SysRepeatLoopEnd1
 	movlw	5
 	movwf	SysWaitTempMS
 	clrf	SysWaitTempMS_H
+	pagesel	Delay_MS
 	call	Delay_MS
+	pagesel	$
 	bcf	LATB,4
 	bsf	LATB,5
 	bcf	LATB,6
@@ -961,14 +829,21 @@ DelayUS8
 	goto	DelayUS8
 	movlw	40
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
+	pagesel	$
 	movlw	6
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
+	pagesel	$
 	movlw	12
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
+	pagesel	CLS
 	call	CLS
+	pagesel	$
 	movlw	12
 	movwf	LCD_STATE
 	return
@@ -1009,294 +884,284 @@ INITSYS
 
 ;********************************************************************************
 
-;Overloaded signature: BYTE:BYTE:BYTE:
-INITTIMER0158
-	movlw	240
-	andwf	T0CON1,W
+MAKEREADINGS
+	movlw	3
+	movwf	ADREADPORT
+	call	FN_READAD21
+	movf	SYSREADADBYTE,W
+	movwf	WALL1IN
+	clrf	WALL1IN_H
+	movlw	3
+	subwf	WALL1IN,W
 	movwf	SysTemp1
-	iorwf	TMRPRES,F
-	decf	TMRSOURCE,W
-	btfsc	STATUS, Z
-	goto	ELSE43_1
-	bsf	TMRPOST,5
-	goto	ENDIF43
-ELSE43_1
-	bcf	TMRPOST,5
-ENDIF43
-	movf	TMRPRES,W
-	movwf	T0CON1
-	movlw	224
-	andwf	T0CON0,W
-	movwf	SysTemp1
-	iorwf	TMRPOST,F
-	bcf	TMRPOST,4
-	movf	TMRPOST,W
-	movwf	T0CON0
-	return
-
-;********************************************************************************
-
-LCDNORMALWRITEBYTE
-SysWaitLoop4
-	call	FN_LCDREADY
-	movf	LCDREADY,F
-	btfsc	STATUS,Z
-	goto	SysWaitLoop4
-	bcf	LATB,1
-	bcf	TRISB,4
-	bcf	TRISB,5
-	bcf	TRISB,6
-	bcf	TRISB,7
-	bcf	LATB,4
-	bcf	LATB,5
-	bcf	LATB,6
-	bcf	LATB,7
-	btfsc	LCDBYTE,7
-	bsf	LATB,7
-	btfsc	LCDBYTE,6
-	bsf	LATB,6
-	btfsc	LCDBYTE,5
-	bsf	LATB,5
-	btfsc	LCDBYTE,4
-	bsf	LATB,4
-	movlw	2
-	movwf	DELAYTEMP
-DelayUS9
-	decfsz	DELAYTEMP,F
-	goto	DelayUS9
-	nop
-	bsf	LATB,2
-	movlw	5
-	movwf	DELAYTEMP
-DelayUS10
-	decfsz	DELAYTEMP,F
-	goto	DelayUS10
-	bcf	LATB,2
-	movlw	5
-	movwf	DELAYTEMP
-DelayUS11
-	decfsz	DELAYTEMP,F
-	goto	DelayUS11
-	bcf	LATB,4
-	bcf	LATB,5
-	bcf	LATB,6
-	bcf	LATB,7
-	btfsc	LCDBYTE,3
-	bsf	LATB,7
-	btfsc	LCDBYTE,2
-	bsf	LATB,6
-	btfsc	LCDBYTE,1
-	bsf	LATB,5
-	btfsc	LCDBYTE,0
-	bsf	LATB,4
-	movlw	2
-	movwf	DELAYTEMP
-DelayUS12
-	decfsz	DELAYTEMP,F
-	goto	DelayUS12
-	nop
-	bsf	LATB,2
-	movlw	5
-	movwf	DELAYTEMP
-DelayUS13
-	decfsz	DELAYTEMP,F
-	goto	DelayUS13
-	bcf	LATB,2
-	movlw	5
-	movwf	DELAYTEMP
-DelayUS14
-	decfsz	DELAYTEMP,F
-	goto	DelayUS14
-	bcf	LATB,7
-	bcf	LATB,6
-	bcf	LATB,5
-	bcf	LATB,4
-	movlw	85
-	movwf	DELAYTEMP
-DelayUS15
-	decfsz	DELAYTEMP,F
-	goto	DelayUS15
-	btfsc	PORTB,0
-	goto	ENDIF33
-	movlw	16
-	subwf	LCDBYTE,W
-	btfsc	STATUS, C
-	goto	ENDIF34
-	movf	LCDBYTE,W
-	sublw	7
-	btfsc	STATUS, C
-	goto	ENDIF35
-	movf	LCDBYTE,W
-	movwf	LCD_STATE
-ENDIF35
-ENDIF34
-ENDIF33
-	return
-
-;********************************************************************************
-
-FN_LCDREADY
-	clrf	LCDREADY
-	bcf	SYSLCDTEMP,2
-	btfsc	PORTB,0
-	bsf	SYSLCDTEMP,2
-	bsf	LATB,1
-	movlw	5
-	movwf	SysWaitTemp10US
-	call	Delay_10US
-	bcf	LATB,0
-	movlw	5
-	movwf	SysWaitTemp10US
-	call	Delay_10US
-	bsf	LATB,2
-	movlw	5
-	movwf	SysWaitTemp10US
-	call	Delay_10US
-	bsf	TRISB,7
-	btfsc	PORTB,7
-	goto	ENDIF22
-	movlw	255
-	movwf	LCDREADY
-ENDIF22
-	bcf	LATB,2
-	movlw	25
-	movwf	SysWaitTemp10US
-	call	Delay_10US
-	bcf	LATB,0
-	btfsc	SYSLCDTEMP,2
-	bsf	LATB,0
-	return
-
-;********************************************************************************
-
-LOCATE
-	bcf	LATB,0
-	movf	LCDLINE,W
-	sublw	1
-	btfsc	STATUS, C
-	goto	ENDIF12
-	movlw	2
-	subwf	LCDLINE,F
-	movlw	16
-	addwf	LCDCOLUMN,F
-ENDIF12
-	movf	LCDLINE,W
-	movwf	SysBYTETempA
-	movlw	64
-	movwf	SysBYTETempB
-	call	SysMultSub
-	movf	LCDCOLUMN,W
-	addwf	SysBYTETempX,W
-	movwf	SysTemp1
-	movlw	128
-	iorwf	SysTemp1,W
-	movwf	LCDBYTE
-	call	LCDNORMALWRITEBYTE
-	movlw	5
-	movwf	SysWaitTemp10US
-	goto	Delay_10US
-
-;********************************************************************************
-
-;Overloaded signature: STRING:
-PRINT113
-	movf	SysPRINTDATAHandler,W
-	movwf	AFSR0
-	movf	SysPRINTDATAHandler_H,W
-	movwf	AFSR0_H
-	movf	INDF0,W
-	movwf	PRINTLEN
-	movf	PRINTLEN,F
-	btfsc	STATUS, Z
-	return
-	bsf	LATB,0
-	clrf	SYSPRINTTEMP
-	movlw	1
-	subwf	PRINTLEN,W
-	btfss	STATUS, C
-	goto	SysForLoopEnd1
-SysForLoop1
-	incf	SYSPRINTTEMP,F
-	movf	SYSPRINTTEMP,W
-	addwf	SysPRINTDATAHandler,W
-	movwf	AFSR0
 	movlw	0
-	addwfc	SysPRINTDATAHandler_H,W
-	movwf	AFSR0_H
-	movf	INDF0,W
-	movwf	LCDBYTE
-	call	LCDNORMALWRITEBYTE
-	movf	PRINTLEN,W
-	subwf	SYSPRINTTEMP,W
-	btfss	STATUS, C
-	goto	SysForLoop1
-SysForLoopEnd1
+	subwfb	WALL1IN_H,W
+	movwf	SysTemp1_H
+	movlw	131
+	movwf	SysWORDTempA
+	movlw	26
+	movwf	SysWORDTempA_H
+	movf	SysTemp1,W
+	movwf	SysWORDTempB
+	movf	SysTemp1_H,W
+	movwf	SysWORDTempB_H
+	pagesel	SysDivSub16
+	call	SysDivSub16
+	pagesel	$
+	movf	SysWORDTempA,W
+	movwf	SysTemp2
+	movf	SysWORDTempA_H,W
+	movwf	SysTemp2_H
+	movlw	4
+	subwf	SysTemp2,W
+	movwf	SysTemp1
+	movlw	0
+	subwfb	SysTemp2_H,W
+	movwf	SysTemp1_H
+	movf	SysTemp1,W
+	movwf	SysWORDTempA
+	movf	SysTemp1_H,W
+	movwf	SysWORDTempA_H
+	movlw	5
+	movwf	SysWORDTempB
+	clrf	SysWORDTempB_H
+	pagesel	SysDivSub16
+	call	SysDivSub16
+	pagesel	$
+	movf	SysWORDTempA,W
+	movwf	WALL1DIST
+	movf	SysWORDTempA_H,W
+	movwf	WALL1DIST_H
+	movlw	4
+	movwf	ADREADPORT
+	call	FN_READAD21
+	movf	SYSREADADBYTE,W
+	movwf	WALL2IN
+	clrf	WALL2IN_H
+	movlw	3
+	subwf	WALL2IN,W
+	movwf	SysTemp1
+	movlw	0
+	subwfb	WALL2IN_H,W
+	movwf	SysTemp1_H
+	movlw	131
+	movwf	SysWORDTempA
+	movlw	26
+	movwf	SysWORDTempA_H
+	movf	SysTemp1,W
+	movwf	SysWORDTempB
+	movf	SysTemp1_H,W
+	movwf	SysWORDTempB_H
+	pagesel	SysDivSub16
+	call	SysDivSub16
+	pagesel	$
+	movf	SysWORDTempA,W
+	movwf	SysTemp2
+	movf	SysWORDTempA_H,W
+	movwf	SysTemp2_H
+	movlw	4
+	subwf	SysTemp2,W
+	movwf	SysTemp1
+	movlw	0
+	subwfb	SysTemp2_H,W
+	movwf	SysTemp1_H
+	movf	SysTemp1,W
+	movwf	SysWORDTempA
+	movf	SysTemp1_H,W
+	movwf	SysWORDTempA_H
+	movlw	5
+	movwf	SysWORDTempB
+	clrf	SysWORDTempB_H
+	pagesel	SysDivSub16
+	call	SysDivSub16
+	pagesel	$
+	movf	SysWORDTempA,W
+	movwf	WALL2DIST
+	movf	SysWORDTempA_H,W
+	movwf	WALL2DIST_H
+	movlw	2
+	movwf	ADREADPORT
+	call	FN_READAD1023
+	movf	SYSREADAD10WORD,W
+	movwf	FLAMEIN
+	movf	SYSREADAD10WORD_H,W
+	movwf	FLAMEIN_H
 	return
 
 ;********************************************************************************
 
-;Overloaded signature: BYTE:
-PRINT114
-	clrf	LCDVALUETEMP
-	bsf	LATB,0
-	movlw	100
-	subwf	LCDVALUE,W
-	btfss	STATUS, C
-	goto	ENDIF16
-	movf	LCDVALUE,W
-	movwf	SysBYTETempA
-	movlw	100
-	movwf	SysBYTETempB
-	call	SysDivSub
-	movf	SysBYTETempA,W
-	movwf	LCDVALUETEMP
-	movf	SYSCALCTEMPX,W
-	movwf	LCDVALUE
-	movlw	48
-	addwf	LCDVALUETEMP,W
-	movwf	LCDBYTE
-	call	LCDNORMALWRITEBYTE
-ENDIF16
-	movf	LCDVALUETEMP,W
-	movwf	SysBYTETempB
-	clrf	SysBYTETempA
-	call	SysCompLessThan
-	movf	SysByteTempX,W
+MOVE
+	movlw	low(DIRECTIONTIMES)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONTIMES)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movf	LASTDIRTIME,W
+	addwf	INDF0,W
 	movwf	SysTemp1
-	movf	LCDVALUE,W
-	movwf	SysBYTETempA
-	movlw	10
-	movwf	SysBYTETempB
-	call	SysCompLessThan
-	comf	SysByteTempX,F
+	clrf	SysTemp2
+	movf	LASTDIRTIME_H,W
+	addwfc	SysTemp2,W
+	movwf	SysTemp1_H
 	movf	SysTemp1,W
-	iorwf	SysByteTempX,W
-	movwf	SysTemp2
-	btfss	SysTemp2,0
-	goto	ENDIF17
-	movf	LCDVALUE,W
+	movwf	SysWORDTempA
+	movf	SysTemp1_H,W
+	movwf	SysWORDTempA_H
+	movf	OVERFLOWS,W
+	movwf	SysWORDTempB
+	movf	OVERFLOWS_H,W
+	movwf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	btfss	SysByteTempX,0
+	goto	ELSE11_1
+	movf	POINTERSTART,W
 	movwf	SysBYTETempA
-	movlw	10
+	movlw	5
 	movwf	SysBYTETempB
+	pagesel	SysDivSub
 	call	SysDivSub
-	movf	SysBYTETempA,W
-	movwf	LCDVALUETEMP
-	movf	SYSCALCTEMPX,W
-	movwf	LCDVALUE
-	movlw	48
-	addwf	LCDVALUETEMP,W
-	movwf	LCDBYTE
-	call	LCDNORMALWRITEBYTE
-ENDIF17
-	movlw	48
-	addwf	LCDVALUE,W
-	movwf	LCDBYTE
-	goto	LCDNORMALWRITEBYTE
+	pagesel	$
+	incf	SysBYTETempX,W
+	movwf	POINTERSTART
+	movf	OVERFLOWS,W
+	movwf	LASTDIRTIME
+	movf	OVERFLOWS_H,W
+	movwf	LASTDIRTIME_H
+	goto	ENDIF11
+ELSE11_1
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movf	INDF0,F
+	btfss	STATUS, Z
+	goto	ELSE12_1
+	call	STOP
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_1
+	decf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE12_2
+	pagesel	FW
+	call	FW
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_2
+	decf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE12_3
+	pagesel	BW
+	call	BW
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_3
+	movlw	3
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE12_4
+	pagesel	TURN_RIGHT
+	call	TURN_RIGHT
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_4
+	movlw	4
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE12_5
+	pagesel	TURN_LEFT
+	call	TURN_LEFT
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_5
+	movlw	5
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE12_6
+	pagesel	SLIGHT_RIGHT
+	call	SLIGHT_RIGHT
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_6
+	movlw	6
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE12_7
+	pagesel	SLIGHT_LEFT
+	call	SLIGHT_LEFT
+	pagesel	$
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	goto	ENDIF12
+ELSE12_7
+	movlw	7
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ENDIF12
+	pagesel	HARD_STOP
+	call	HARD_STOP
+	pagesel	$
+ENDIF12
+ENDIF11
+	return
 
 ;********************************************************************************
 
 ;Overloaded signature: WORD:
-PRINT115
+PRINT128
 	bsf	LATB,0
 	clrf	LCDVALUETEMP
 	movf	LCDVALUE,W
@@ -1307,10 +1172,12 @@ PRINT115
 	movwf	SysWORDTempB
 	movlw	39
 	movwf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF18
+	goto	ENDIF35
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1319,7 +1186,9 @@ PRINT115
 	movwf	SysWORDTempB
 	movlw	39
 	movwf	SysWORDTempB_H
+	pagesel	SysDivSub16
 	call	SysDivSub16
+	pagesel	$
 	movf	SysWORDTempA,W
 	movwf	LCDVALUETEMP
 	movf	SYSCALCTEMPX,W
@@ -1329,9 +1198,11 @@ PRINT115
 	movlw	48
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
+	pagesel	$
 	goto	LCDPRINTWORD1000
-ENDIF18
+ENDIF35
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1340,10 +1211,12 @@ ENDIF18
 	movwf	SysWORDTempB
 	movlw	3
 	movwf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF19
+	goto	ENDIF36
 LCDPRINTWORD1000
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
@@ -1353,7 +1226,9 @@ LCDPRINTWORD1000
 	movwf	SysWORDTempB
 	movlw	3
 	movwf	SysWORDTempB_H
+	pagesel	SysDivSub16
 	call	SysDivSub16
+	pagesel	$
 	movf	SysWORDTempA,W
 	movwf	LCDVALUETEMP
 	movf	SYSCALCTEMPX,W
@@ -1363,9 +1238,11 @@ LCDPRINTWORD1000
 	movlw	48
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
+	pagesel	$
 	goto	LCDPRINTWORD100
-ENDIF19
+ENDIF36
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1373,10 +1250,12 @@ ENDIF19
 	movlw	100
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF20
+	goto	ENDIF37
 LCDPRINTWORD100
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
@@ -1385,7 +1264,9 @@ LCDPRINTWORD100
 	movlw	100
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
+	pagesel	SysDivSub16
 	call	SysDivSub16
+	pagesel	$
 	movf	SysWORDTempA,W
 	movwf	LCDVALUETEMP
 	movf	SYSCALCTEMPX,W
@@ -1395,9 +1276,11 @@ LCDPRINTWORD100
 	movlw	48
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
+	pagesel	$
 	goto	LCDPRINTWORD10
-ENDIF20
+ENDIF37
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1405,10 +1288,12 @@ ENDIF20
 	movlw	10
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
 	call	SysCompLessThan16
+	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF21
+	goto	ENDIF38
 LCDPRINTWORD10
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
@@ -1417,7 +1302,9 @@ LCDPRINTWORD10
 	movlw	10
 	movwf	SysWORDTempB
 	clrf	SysWORDTempB_H
+	pagesel	SysDivSub16
 	call	SysDivSub16
+	pagesel	$
 	movf	SysWORDTempA,W
 	movwf	LCDVALUETEMP
 	movf	SYSCALCTEMPX,W
@@ -1427,17 +1314,204 @@ LCDPRINTWORD10
 	movlw	48
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
-ENDIF21
+	pagesel	$
+ENDIF38
 	movlw	48
 	addwf	LCDVALUE,W
 	movwf	LCDBYTE
+	pagesel	LCDNORMALWRITEBYTE
 	goto	LCDNORMALWRITEBYTE
 
 ;********************************************************************************
 
+PRINTDEBUG
+	pagesel	CLS
+	call	CLS
+	pagesel	$
+	clrf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	btfsc	STATUS, C
+	goto	ELSE22_1
+	clrf	I
+	movf	POINTERSTART,W
+	subwf	POINTEREND,W
+	movwf	SysTemp3
+	movlw	1
+	movwf	SysBYTETempB
+	movf	SysTemp3,W
+	movwf	SysBYTETempA
+	pagesel	SysCompLessThan
+	call	SysCompLessThan
+	pagesel	$
+	btfsc	SysByteTempX,0
+	goto	SysForLoopEnd2
+SysForLoop2
+	incf	I,F
+	movf	I,W
+	addwf	POINTERSTART,W
+	movwf	SysTemp3
+	movlw	2
+	subwf	SysTemp3,W
+	movwf	SysTemp1
+	movwf	SysBYTETempA
+	movlw	5
+	movwf	SysBYTETempB
+	pagesel	SysDivSub
+	call	SysDivSub
+	pagesel	$
+	movf	SysBYTETempX,W
+	movwf	SysTemp3
+	incf	SysTemp3,W
+	movwf	SysTemp1
+	movlw	low(DIRECTIONS)
+	addwf	SysTemp1,W
+	movwf	AFSR0
+	clrf	SysTemp3
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp3,W
+	movwf	AFSR0_H
+	movf	INDF0,W
+	movwf	LCDVALUE
+	pagesel	PRINT127
+	call	PRINT127
+	pagesel	$
+	movlw	low StringTable3
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable3) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	$
+	movf	POINTERSTART,W
+	subwf	POINTEREND,W
+	movwf	SysTemp3
+	movf	I,W
+	movwf	SysBYTETempA
+	movf	SysTemp3,W
+	movwf	SysBYTETempB
+	pagesel	SysCompLessThan
+	call	SysCompLessThan
+	pagesel	$
+	btfsc	SysByteTempX,0
+	goto	SysForLoop2
+SysForLoopEnd2
+	goto	ENDIF22
+ELSE22_1
+	movf	POINTERSTART,W
+	subwf	POINTEREND,W
+	btfsc	STATUS, C
+	goto	ENDIF22
+	clrf	I
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	movwf	SysTemp3
+	sublw	5
+	movwf	SysTemp1
+	movlw	1
+	movwf	SysBYTETempB
+	movf	SysTemp1,W
+	movwf	SysBYTETempA
+	pagesel	SysCompLessThan
+	call	SysCompLessThan
+	pagesel	$
+	btfsc	SysByteTempX,0
+	goto	SysForLoopEnd3
+SysForLoop3
+	incf	I,F
+	movf	I,W
+	addwf	POINTERSTART,W
+	movwf	SysTemp3
+	movlw	2
+	subwf	SysTemp3,W
+	movwf	SysTemp1
+	movwf	SysBYTETempA
+	movlw	5
+	movwf	SysBYTETempB
+	pagesel	SysDivSub
+	call	SysDivSub
+	pagesel	$
+	movf	SysBYTETempX,W
+	movwf	SysTemp3
+	incf	SysTemp3,W
+	movwf	SysTemp1
+	movlw	low(DIRECTIONS)
+	addwf	SysTemp1,W
+	movwf	AFSR0
+	clrf	SysTemp3
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp3,W
+	movwf	AFSR0_H
+	movf	INDF0,W
+	movwf	LCDVALUE
+	pagesel	PRINT127
+	call	PRINT127
+	pagesel	$
+	movlw	low StringTable3
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable3) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	$
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	movwf	SysTemp3
+	sublw	5
+	movwf	SysTemp1
+	movf	I,W
+	movwf	SysBYTETempA
+	movf	SysTemp1,W
+	movwf	SysBYTETempB
+	pagesel	SysCompLessThan
+	call	SysCompLessThan
+	pagesel	$
+	btfsc	SysByteTempX,0
+	goto	SysForLoop3
+SysForLoopEnd3
+ENDIF22
+	movlw	1
+	movwf	LCDLINE
+	clrf	LCDCOLUMN
+	pagesel	LOCATE
+	call	LOCATE
+	pagesel	$
+	movlw	low StringTable3
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable3) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	$
+	movf	WALL1DIST,W
+	movwf	LCDVALUE
+	movf	WALL1DIST_H,W
+	movwf	LCDVALUE_H
+	call	PRINT128
+	pagesel	$
+	movlw	low StringTable3
+	movwf	SysPRINTDATAHandler
+	movlw	(high StringTable3) | 128
+	movwf	SysPRINTDATAHandler_H
+	pagesel	PRINT126
+	call	PRINT126
+	pagesel	$
+	movf	WALL2DIST,W
+	movwf	LCDVALUE
+	movf	WALL2DIST_H,W
+	movwf	LCDVALUE_H
+	goto	PRINT128
+
+;********************************************************************************
+
 ;Overloaded signature: BYTE:
-FN_READAD8
+FN_READAD21
 	banksel	ADCON0
 	bcf	ADCON0,ADFRM0
 	banksel	ADREADPORT
@@ -1740,7 +1814,9 @@ SysSelectEnd1
 	movlw	2
 	movwf	SysWaitTemp10US
 	banksel	STATUS
+	pagesel	Delay_10US
 	call	Delay_10US
+	pagesel	$
 	banksel	ADCON0
 	bsf	ADCON0,GO_NOT_DONE
 	nop
@@ -1766,7 +1842,7 @@ SysWaitLoop1
 ;********************************************************************************
 
 ;Overloaded signature: BYTE:
-FN_READAD1010
+FN_READAD1023
 	banksel	ADCON0
 	bsf	ADCON0,ADFRM0
 	banksel	ADREADPORT
@@ -2069,7 +2145,9 @@ SysSelectEnd2
 	movlw	2
 	movwf	SysWaitTemp10US
 	banksel	STATUS
+	pagesel	Delay_10US
 	call	Delay_10US
+	pagesel	$
 	banksel	ADCON0
 	bsf	ADCON0,GO_NOT_DONE
 	nop
@@ -2105,50 +2183,50 @@ STARTTIMER
 	bsf	T0CON0,T0EN
 	decf	TMRNUMBER,W
 	btfss	STATUS, Z
-	goto	ENDIF37
+	goto	ENDIF54
 	banksel	T1CON
 	bsf	T1CON,TMR1ON
-ENDIF37
+ENDIF54
 	movlw	2
 	banksel	TMRNUMBER
 	subwf	TMRNUMBER,W
 	btfss	STATUS, Z
-	goto	ENDIF38
+	goto	ENDIF55
 	banksel	T2CON
 	bsf	T2CON,TMR2ON
-ENDIF38
+ENDIF55
 	movlw	3
 	banksel	TMRNUMBER
 	subwf	TMRNUMBER,W
 	btfss	STATUS, Z
-	goto	ENDIF39
+	goto	ENDIF56
 	banksel	T3CON
 	bsf	T3CON,TMR3ON
-ENDIF39
+ENDIF56
 	movlw	4
 	banksel	TMRNUMBER
 	subwf	TMRNUMBER,W
 	btfss	STATUS, Z
-	goto	ENDIF40
+	goto	ENDIF57
 	banksel	T4CON
 	bsf	T4CON,TMR4ON
-ENDIF40
+ENDIF57
 	movlw	5
 	banksel	TMRNUMBER
 	subwf	TMRNUMBER,W
 	btfss	STATUS, Z
-	goto	ENDIF41
+	goto	ENDIF58
 	banksel	T5CON
 	bsf	T5CON,TMR5ON
-ENDIF41
+ENDIF58
 	movlw	6
 	banksel	TMRNUMBER
 	subwf	TMRNUMBER,W
 	btfss	STATUS, Z
-	goto	ENDIF42
+	goto	ENDIF59
 	banksel	T6CON
 	bsf	T6CON,TMR6ON
-ENDIF42
+ENDIF59
 	banksel	STATUS
 	return
 
@@ -2158,6 +2236,648 @@ STOP
 	bcf	LATD,3
 	bcf	LATD,2
 	bcf	LATD,0
+	bcf	LATD,1
+	return
+
+;********************************************************************************
+
+WALLHUG
+	movf	WALL1DIST,W
+	movwf	SysWORDTempA
+	movf	WALL1DIST_H,W
+	movwf	SysWORDTempA_H
+	movlw	9
+	movwf	SysWORDTempB
+	clrf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	movf	SysByteTempX,W
+	movwf	SysTemp3
+	movf	IMMUNE,W
+	movwf	SysBYTETempA
+	movlw	2
+	movwf	SysBYTETempB
+	pagesel	SysCompEqual
+	call	SysCompEqual
+	pagesel	$
+	comf	SysByteTempX,F
+	movf	SysTemp3,W
+	andwf	SysByteTempX,W
+	movwf	SysTemp1
+	btfss	SysTemp1,0
+	goto	ELSE18_1
+	pagesel	FN_WALLCHECK
+	call	FN_WALLCHECK
+	pagesel	$
+	btfss	SYSBITVAR0,6
+	goto	ELSE19_1
+	movlw	5
+	movwf	DIRECTION
+	movlw	10
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	goto	ENDIF19
+ELSE19_1
+	movlw	2
+	movwf	IMMUNE
+	movlw	255
+	movwf	MINWALL
+	movwf	MINWALL_H
+	movlw	1
+	movwf	DIRECTION
+	movlw	20
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+ENDIF19
+	goto	ENDIF18
+ELSE18_1
+	movf	WALL1DIST,W
+	movwf	SysWORDTempB
+	movf	WALL1DIST_H,W
+	movwf	SysWORDTempB_H
+	movlw	15
+	movwf	SysWORDTempA
+	clrf	SysWORDTempA_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	movf	SysByteTempX,W
+	movwf	SysTemp3
+	movf	IMMUNE,W
+	movwf	SysBYTETempA
+	movlw	1
+	movwf	SysBYTETempB
+	pagesel	SysCompEqual
+	call	SysCompEqual
+	pagesel	$
+	comf	SysByteTempX,F
+	movf	SysTemp3,W
+	andwf	SysByteTempX,W
+	movwf	SysTemp1
+	btfss	SysTemp1,0
+	goto	ELSE18_2
+	pagesel	FN_WALLCHECK
+	call	FN_WALLCHECK
+	pagesel	$
+	btfss	SYSBITVAR0,6
+	goto	ELSE20_1
+	movlw	6
+	movwf	DIRECTION
+	movlw	10
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+	goto	ENDIF20
+ELSE20_1
+	movlw	1
+	movwf	IMMUNE
+	movlw	255
+	movwf	MINWALL
+	movwf	MINWALL_H
+	movlw	1
+	movwf	DIRECTION
+	movlw	20
+	movwf	TIME
+	pagesel	ADDDIRECTION
+	call	ADDDIRECTION
+	pagesel	$
+ENDIF20
+	goto	ENDIF18
+ELSE18_2
+	movf	WALL1DIST,W
+	movwf	SysWORDTempB
+	movf	WALL1DIST_H,W
+	movwf	SysWORDTempB_H
+	movlw	15
+	movwf	SysWORDTempA
+	clrf	SysWORDTempA_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	comf	SysByteTempX,F
+	movf	SysByteTempX,W
+	movwf	SysTemp3
+	movf	WALL1DIST,W
+	movwf	SysWORDTempA
+	movf	WALL1DIST_H,W
+	movwf	SysWORDTempA_H
+	movlw	9
+	movwf	SysWORDTempB
+	clrf	SysWORDTempB_H
+	pagesel	SysCompLessThan16
+	call	SysCompLessThan16
+	pagesel	$
+	comf	SysByteTempX,F
+	movf	SysTemp3,W
+	andwf	SysByteTempX,W
+	movwf	SysTemp1
+	btfsc	SysTemp1,0
+	clrf	IMMUNE
+	pagesel	FW
+	call	FW
+	pagesel	$
+ENDIF18
+	return
+
+;********************************************************************************
+
+;Start of program memory page 1
+	ORG	2048
+ADDDIRECTION
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	btfss	STATUS, Z
+	goto	ENDIF10
+	movf	OVERFLOWS,W
+	movwf	LASTDIRTIME
+	movf	OVERFLOWS_H,W
+	movwf	LASTDIRTIME_H
+ENDIF10
+	movlw	low(DIRECTIONS)
+	addwf	POINTEREND,W
+	movwf	AFSR0
+	clrf	SysTemp1
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp1,W
+	movwf	AFSR0_H
+	movf	DIRECTION,W
+	movwf	INDF0
+	movlw	low(DIRECTIONTIMES)
+	addwf	POINTEREND,W
+	movwf	AFSR0
+	clrf	SysTemp1
+	movlw	high(DIRECTIONTIMES)
+	addwfc	SysTemp1,W
+	movwf	AFSR0_H
+	movf	TIME,W
+	movwf	INDF0
+	movf	POINTEREND,W
+	movwf	SysBYTETempA
+	movlw	5
+	movwf	SysBYTETempB
+	call	SysDivSub
+	incf	SysBYTETempX,W
+	movwf	POINTEREND
+	return
+
+;********************************************************************************
+
+BW
+	bcf	LATD,3
+	bsf	LATD,2
+	bcf	LATD,0
+	bsf	LATD,1
+	return
+
+;********************************************************************************
+
+CLS
+	bcf	LATB,0
+	movlw	1
+	movwf	LCDBYTE
+	call	LCDNORMALWRITEBYTE
+	movlw	4
+	movwf	SysWaitTempMS
+	clrf	SysWaitTempMS_H
+	call	Delay_MS
+	movlw	128
+	movwf	LCDBYTE
+	call	LCDNORMALWRITEBYTE
+	movlw	12
+	movwf	SysWaitTemp10US
+	goto	Delay_10US
+
+;********************************************************************************
+
+Delay_10US
+D10US_START
+	movlw	25
+	movwf	DELAYTEMP
+DelayUS0
+	decfsz	DELAYTEMP,F
+	goto	DelayUS0
+	nop
+	decfsz	SysWaitTemp10US, F
+	goto	D10US_START
+	return
+
+;********************************************************************************
+
+Delay_MS
+	incf	SysWaitTempMS_H, F
+DMS_START
+	movlw	14
+	movwf	DELAYTEMP2
+DMS_OUTER
+	movlw	189
+	movwf	DELAYTEMP
+DMS_INNER
+	decfsz	DELAYTEMP, F
+	goto	DMS_INNER
+	decfsz	DELAYTEMP2, F
+	goto	DMS_OUTER
+	decfsz	SysWaitTempMS, F
+	goto	DMS_START
+	decfsz	SysWaitTempMS_H, F
+	goto	DMS_START
+	return
+
+;********************************************************************************
+
+Delay_S
+DS_START
+	movlw	232
+	movwf	SysWaitTempMS
+	movlw	3
+	movwf	SysWaitTempMS_H
+	call	Delay_MS
+	decfsz	SysWaitTempS, F
+	goto	DS_START
+	return
+
+;********************************************************************************
+
+FN_FLAMECHECK
+	movf	FLAMEIN,W
+	movwf	SysWORDTempA
+	movf	FLAMEIN_H,W
+	movwf	SysWORDTempA_H
+	movf	MAXFLAME,W
+	movwf	SysWORDTempB
+	movf	MAXFLAME_H,W
+	movwf	SysWORDTempB_H
+	call	SysCompLessThan16
+	btfss	SysByteTempX,0
+	goto	ELSE17_1
+	bsf	SYSBITVAR0,5
+	movf	FLAMEIN,W
+	movwf	MAXFLAME
+	movf	FLAMEIN_H,W
+	movwf	MAXFLAME_H
+	goto	ENDIF17
+ELSE17_1
+	movf	FLAMEIN,W
+	movwf	SysWORDTempA
+	movf	FLAMEIN_H,W
+	movwf	SysWORDTempA_H
+	movlw	10
+	movwf	SysWORDTempB
+	clrf	SysWORDTempB_H
+	call	SysDivSub16
+	movf	SysWORDTempA,W
+	movwf	SysTemp1
+	movf	SysWORDTempA_H,W
+	movwf	SysTemp1_H
+	movf	SysTemp1,W
+	addwf	FLAMEIN,W
+	movwf	SysTemp2
+	movf	SysTemp1_H,W
+	addwfc	FLAMEIN_H,W
+	movwf	SysTemp2_H
+	movf	SysTemp2,W
+	movwf	SysWORDTempB
+	movf	SysTemp2_H,W
+	movwf	SysWORDTempB_H
+	movf	MAXFLAME,W
+	movwf	SysWORDTempA
+	movf	MAXFLAME_H,W
+	movwf	SysWORDTempA_H
+	call	SysCompLessThan16
+	comf	SysByteTempX,F
+	btfss	SysByteTempX,0
+	goto	ELSE17_2
+	bsf	SYSBITVAR0,5
+	goto	ENDIF17
+ELSE17_2
+	bcf	SYSBITVAR0,5
+ENDIF17
+	return
+
+;********************************************************************************
+
+FW
+	bsf	LATD,3
+	bcf	LATD,2
+	bsf	LATD,0
+	bcf	LATD,1
+	return
+
+;********************************************************************************
+
+HARD_STOP
+	bsf	LATD,3
+	bsf	LATD,2
+	bsf	LATD,0
+	bsf	LATD,1
+	return
+
+;********************************************************************************
+
+;Overloaded signature: BYTE:BYTE:BYTE:
+INITTIMER0171
+	movlw	240
+	andwf	T0CON1,W
+	movwf	SysTemp3
+	iorwf	TMRPRES,F
+	decf	TMRSOURCE,W
+	btfsc	STATUS, Z
+	goto	ELSE60_1
+	bsf	TMRPOST,5
+	goto	ENDIF60
+ELSE60_1
+	bcf	TMRPOST,5
+ENDIF60
+	movf	TMRPRES,W
+	movwf	T0CON1
+	movlw	224
+	andwf	T0CON0,W
+	movwf	SysTemp3
+	iorwf	TMRPOST,F
+	bcf	TMRPOST,4
+	movf	TMRPOST,W
+	movwf	T0CON0
+	return
+
+;********************************************************************************
+
+LCDNORMALWRITEBYTE
+SysWaitLoop4
+	call	FN_LCDREADY
+	movf	LCDREADY,F
+	btfsc	STATUS,Z
+	goto	SysWaitLoop4
+	bcf	LATB,1
+	bcf	TRISB,4
+	bcf	TRISB,5
+	bcf	TRISB,6
+	bcf	TRISB,7
+	bcf	LATB,4
+	bcf	LATB,5
+	bcf	LATB,6
+	bcf	LATB,7
+	btfsc	LCDBYTE,7
+	bsf	LATB,7
+	btfsc	LCDBYTE,6
+	bsf	LATB,6
+	btfsc	LCDBYTE,5
+	bsf	LATB,5
+	btfsc	LCDBYTE,4
+	bsf	LATB,4
+	movlw	2
+	movwf	DELAYTEMP
+DelayUS9
+	decfsz	DELAYTEMP,F
+	goto	DelayUS9
+	nop
+	bsf	LATB,2
+	movlw	5
+	movwf	DELAYTEMP
+DelayUS10
+	decfsz	DELAYTEMP,F
+	goto	DelayUS10
+	bcf	LATB,2
+	movlw	5
+	movwf	DELAYTEMP
+DelayUS11
+	decfsz	DELAYTEMP,F
+	goto	DelayUS11
+	bcf	LATB,4
+	bcf	LATB,5
+	bcf	LATB,6
+	bcf	LATB,7
+	btfsc	LCDBYTE,3
+	bsf	LATB,7
+	btfsc	LCDBYTE,2
+	bsf	LATB,6
+	btfsc	LCDBYTE,1
+	bsf	LATB,5
+	btfsc	LCDBYTE,0
+	bsf	LATB,4
+	movlw	2
+	movwf	DELAYTEMP
+DelayUS12
+	decfsz	DELAYTEMP,F
+	goto	DelayUS12
+	nop
+	bsf	LATB,2
+	movlw	5
+	movwf	DELAYTEMP
+DelayUS13
+	decfsz	DELAYTEMP,F
+	goto	DelayUS13
+	bcf	LATB,2
+	movlw	5
+	movwf	DELAYTEMP
+DelayUS14
+	decfsz	DELAYTEMP,F
+	goto	DelayUS14
+	bcf	LATB,7
+	bcf	LATB,6
+	bcf	LATB,5
+	bcf	LATB,4
+	movlw	85
+	movwf	DELAYTEMP
+DelayUS15
+	decfsz	DELAYTEMP,F
+	goto	DelayUS15
+	btfsc	PORTB,0
+	goto	ENDIF50
+	movlw	16
+	subwf	LCDBYTE,W
+	btfsc	STATUS, C
+	goto	ENDIF51
+	movf	LCDBYTE,W
+	sublw	7
+	btfsc	STATUS, C
+	goto	ENDIF52
+	movf	LCDBYTE,W
+	movwf	LCD_STATE
+ENDIF52
+ENDIF51
+ENDIF50
+	return
+
+;********************************************************************************
+
+FN_LCDREADY
+	clrf	LCDREADY
+	bcf	SYSLCDTEMP,2
+	btfsc	PORTB,0
+	bsf	SYSLCDTEMP,2
+	bsf	LATB,1
+	movlw	5
+	movwf	SysWaitTemp10US
+	call	Delay_10US
+	bcf	LATB,0
+	movlw	5
+	movwf	SysWaitTemp10US
+	call	Delay_10US
+	bsf	LATB,2
+	movlw	5
+	movwf	SysWaitTemp10US
+	call	Delay_10US
+	bsf	TRISB,7
+	btfsc	PORTB,7
+	goto	ENDIF39
+	movlw	255
+	movwf	LCDREADY
+ENDIF39
+	bcf	LATB,2
+	movlw	25
+	movwf	SysWaitTemp10US
+	call	Delay_10US
+	bcf	LATB,0
+	btfsc	SYSLCDTEMP,2
+	bsf	LATB,0
+	return
+
+;********************************************************************************
+
+LOCATE
+	bcf	LATB,0
+	movf	LCDLINE,W
+	sublw	1
+	btfsc	STATUS, C
+	goto	ENDIF29
+	movlw	2
+	subwf	LCDLINE,F
+	movlw	16
+	addwf	LCDCOLUMN,F
+ENDIF29
+	movf	LCDLINE,W
+	movwf	SysBYTETempA
+	movlw	64
+	movwf	SysBYTETempB
+	call	SysMultSub
+	movf	LCDCOLUMN,W
+	addwf	SysBYTETempX,W
+	movwf	SysTemp3
+	movlw	128
+	iorwf	SysTemp3,W
+	movwf	LCDBYTE
+	call	LCDNORMALWRITEBYTE
+	movlw	5
+	movwf	SysWaitTemp10US
+	goto	Delay_10US
+
+;********************************************************************************
+
+;Overloaded signature: STRING:
+PRINT126
+	movf	SysPRINTDATAHandler,W
+	movwf	AFSR0
+	movf	SysPRINTDATAHandler_H,W
+	movwf	AFSR0_H
+	movf	INDF0,W
+	movwf	PRINTLEN
+	movf	PRINTLEN,F
+	btfsc	STATUS, Z
+	return
+	bsf	LATB,0
+	clrf	SYSPRINTTEMP
+	movlw	1
+	subwf	PRINTLEN,W
+	btfss	STATUS, C
+	goto	SysForLoopEnd4
+SysForLoop4
+	incf	SYSPRINTTEMP,F
+	movf	SYSPRINTTEMP,W
+	addwf	SysPRINTDATAHandler,W
+	movwf	AFSR0
+	movlw	0
+	addwfc	SysPRINTDATAHandler_H,W
+	movwf	AFSR0_H
+	movf	INDF0,W
+	movwf	LCDBYTE
+	call	LCDNORMALWRITEBYTE
+	movf	PRINTLEN,W
+	subwf	SYSPRINTTEMP,W
+	btfss	STATUS, C
+	goto	SysForLoop4
+SysForLoopEnd4
+	return
+
+;********************************************************************************
+
+;Overloaded signature: BYTE:
+PRINT127
+	clrf	LCDVALUETEMP
+	bsf	LATB,0
+	movlw	100
+	subwf	LCDVALUE,W
+	btfss	STATUS, C
+	goto	ENDIF33
+	movf	LCDVALUE,W
+	movwf	SysBYTETempA
+	movlw	100
+	movwf	SysBYTETempB
+	call	SysDivSub
+	movf	SysBYTETempA,W
+	movwf	LCDVALUETEMP
+	movf	SYSCALCTEMPX,W
+	movwf	LCDVALUE
+	movlw	48
+	addwf	LCDVALUETEMP,W
+	movwf	LCDBYTE
+	call	LCDNORMALWRITEBYTE
+ENDIF33
+	movf	LCDVALUETEMP,W
+	movwf	SysBYTETempB
+	clrf	SysBYTETempA
+	call	SysCompLessThan
+	movf	SysByteTempX,W
+	movwf	SysTemp3
+	movf	LCDVALUE,W
+	movwf	SysBYTETempA
+	movlw	10
+	movwf	SysBYTETempB
+	call	SysCompLessThan
+	comf	SysByteTempX,F
+	movf	SysTemp3,W
+	iorwf	SysByteTempX,W
+	movwf	SysTemp1
+	btfss	SysTemp1,0
+	goto	ENDIF34
+	movf	LCDVALUE,W
+	movwf	SysBYTETempA
+	movlw	10
+	movwf	SysBYTETempB
+	call	SysDivSub
+	movf	SysBYTETempA,W
+	movwf	LCDVALUETEMP
+	movf	SYSCALCTEMPX,W
+	movwf	LCDVALUE
+	movlw	48
+	addwf	LCDVALUETEMP,W
+	movwf	LCDBYTE
+	call	LCDNORMALWRITEBYTE
+ENDIF34
+	movlw	48
+	addwf	LCDVALUE,W
+	movwf	LCDBYTE
+	goto	LCDNORMALWRITEBYTE
+
+;********************************************************************************
+
+SLIGHT_LEFT
+	bsf	LATD,3
+	bcf	LATD,2
+	bcf	LATD,0
+	bcf	LATD,1
+	return
+
+;********************************************************************************
+
+SLIGHT_RIGHT
+	bcf	LATD,3
+	bcf	LATD,2
+	bsf	LATD,0
 	bcf	LATD,1
 	return
 
@@ -2264,11 +2984,11 @@ SYSDIVSUB16
 	clrf	SysWORDTempB_H
 	call	SysCompEqual16
 	btfss	SysByteTempX,0
-	goto	ENDIF44
+	goto	ENDIF61
 	clrf	SYSWORDTEMPA
 	clrf	SYSWORDTEMPA_H
 	return
-ENDIF44
+ENDIF61
 	movlw	16
 	movwf	SYSDIVLOOP
 SYSDIV16START
@@ -2283,13 +3003,13 @@ SYSDIV16START
 	subwfb	SYSDIVMULTX_H,F
 	bsf	SYSDIVMULTA,0
 	btfsc	STATUS,C
-	goto	ENDIF45
+	goto	ENDIF62
 	bcf	SYSDIVMULTA,0
 	movf	SYSDIVMULTB,W
 	addwf	SYSDIVMULTX,F
 	movf	SYSDIVMULTB_H,W
 	addwfc	SYSDIVMULTX_H,F
-ENDIF45
+ENDIF62
 	decfsz	SYSDIVLOOP, F
 	goto	SYSDIV16START
 	movf	SYSDIVMULTA,W
@@ -2331,29 +3051,6 @@ SysStringTables
 	movwf	PCL
 
 StringTable1
-	retlw	2
-	retlw	76	;L
-	retlw	32	; 
-
-
-StringTable2
-	retlw	1
-	retlw	32	; 
-
-
-StringTable3
-	retlw	2
-	retlw	70	;F
-	retlw	32	; 
-
-
-StringTable4
-	retlw	2
-	retlw	68	;D
-	retlw	32	; 
-
-
-StringTable5
 	retlw	13
 	retlw	69	;E
 	retlw	88	;X
@@ -2370,7 +3067,7 @@ StringTable5
 	retlw	71	;G
 
 
-StringTable6
+StringTable2
 	retlw	17
 	retlw	35	;#
 	retlw	49	;1
@@ -2389,6 +3086,11 @@ StringTable6
 	retlw	65	;A
 	retlw	76	;L
 	retlw	69	;E
+
+
+StringTable3
+	retlw	1
+	retlw	32	; 
 
 
 ;********************************************************************************
@@ -2419,8 +3121,31 @@ TURN_RIGHT
 
 ;********************************************************************************
 
-;Start of program memory page 1
-	ORG	2048
+FN_WALLCHECK
+	movf	WALL1DIST,W
+	movwf	SysWORDTempA
+	movf	WALL1DIST_H,W
+	movwf	SysWORDTempA_H
+	movf	MINWALL,W
+	movwf	SysWORDTempB
+	movf	MINWALL_H,W
+	movwf	SysWORDTempB_H
+	call	SysCompLessThan16
+	btfss	SysByteTempX,0
+	goto	ELSE63_1
+	bsf	SYSBITVAR0,6
+	movf	WALL1DIST,W
+	movwf	MINWALL
+	movf	WALL1DIST_H,W
+	movwf	MINWALL_H
+	goto	ENDIF63
+ELSE63_1
+	bcf	SYSBITVAR0,6
+ENDIF63
+	return
+
+;********************************************************************************
+
 ;Start of program memory page 2
 	ORG	4096
 ;Start of program memory page 3
