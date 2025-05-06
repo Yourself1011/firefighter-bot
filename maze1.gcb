@@ -173,7 +173,7 @@ dim flameFound as bit
 flameFound = 0
 
 dim minWall as word
-minWall = 65535
+minWall = 0
 dim immune as byte
 ' left = 1, right = 2
 immune = 0
@@ -289,9 +289,9 @@ function flameCheck as bit
 end function
 
 function wallCheck as bit
-    if wall1Dist < minWall then 'and flameIn < 100 then
+    if wall1In < minWall then 'and flameIn < 100 then
         wallCheck = 1
-        minWall = wall1Dist
+        minWall = wall1In
     else
         wallCheck = 0
     end if
@@ -304,7 +304,7 @@ Sub wallHug ()
             addDirection(5, 10)
         else
             immune = 2
-            minWall = 65535
+            minWall = 0
             addDirection(1, 20)
         end if
     else if Wall1Dist > 15 and immune <> 1 then
@@ -313,7 +313,7 @@ Sub wallHug ()
             addDirection(6, 10)
         else
             immune = 1
-            minWall = 65535
+            minWall = 0
             addDirection(1, 20)
         end if
     else
@@ -364,9 +364,9 @@ sub printDebug
     ' print "MF:"
     ' print maxFlame
     print " "
-    print Wall1Dist
+    print Wall1In
     print " "
-    print wall2Dist
+    print wall2In
     ' Locate 1, 0
     ' print "D "
     ' print directions(pointerStart)
@@ -414,18 +414,25 @@ do
     end if
     if Wall1Dist > 40 then
         ' big space to left, turn 90 degrees
+        clearQueue
         addDirection(1, 10)
         addDirection(7, 5)
         addDirection(4, 40)
         addDirection(1, 60)
     else if Wall2Dist < 20 then
         ' wall in front, turn 90 degrees right
+        clearQueue
+        addDirection(1, 10)
         addDirection(1, 10)
         addDirection(7, 5)
         addDirection(3, 40)
         addDirection(1, 60)
     end if 
-    move
+    if pointerStart <> pointerEnd then
+        move
+    else
+        fw
+    end if
 
     if flameIn < 25 and Wall2Dist < 20 then
         blow

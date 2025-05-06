@@ -218,7 +218,9 @@ BASPROGRAMSTART
 	movwf	TMR0H
 	clrf	TMR0L
 	clrf	TMRNUMBER
+	pagesel	STARTTIMER
 	call	STARTTIMER
+	pagesel	$
 	banksel	PIE0
 	bsf	PIE0,TMR0IE
 	banksel	LATD
@@ -273,9 +275,8 @@ SysForLoopEnd1
 	clrf	LASTDIRTIME_H
 	bsf	SYSBITVAR0,3
 	bcf	SYSBITVAR0,4
-	movlw	255
-	movwf	MINWALL
-	movwf	MINWALL_H
+	clrf	MINWALL
+	clrf	MINWALL_H
 	clrf	IMMUNE
 	movlw	10
 	movwf	SysWaitTempMS
@@ -304,7 +305,7 @@ SysDoLoop_S1
 	movf	LINECOUNT,W
 	movwf	SysTemp1
 	btfss	SysTemp1,0
-	goto	ENDIF7
+	goto	ENDIF8
 	bcf	SYSBITVAR0,3
 	movlw	75
 	addwf	OVERFLOWS,W
@@ -312,7 +313,7 @@ SysDoLoop_S1
 	movlw	0
 	addwfc	OVERFLOWS_H,W
 	movwf	SEARCHCD_H
-ENDIF7
+ENDIF8
 ENDIF2
 	bcf	SYSBITVAR0,1
 	btfsc	SYSBITVAR0,0
@@ -356,34 +357,29 @@ ENDIF3
 	pagesel	$
 	btfss	SysByteTempX,0
 	goto	ELSE5_1
+	pagesel	CLEARQUEUE
+	call	CLEARQUEUE
+	pagesel	$
 	movlw	1
 	movwf	DIRECTION
 	movlw	10
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 	movlw	7
 	movwf	DIRECTION
 	movlw	5
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 	movlw	4
 	movwf	DIRECTION
 	movlw	40
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 	movlw	1
 	movwf	DIRECTION
 	movlw	60
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 	goto	ENDIF5
 ELSE5_1
 	movf	WALL2DIST,W
@@ -398,36 +394,46 @@ ELSE5_1
 	pagesel	$
 	btfss	SysByteTempX,0
 	goto	ENDIF5
+	pagesel	CLEARQUEUE
+	call	CLEARQUEUE
+	pagesel	$
 	movlw	1
 	movwf	DIRECTION
 	movlw	10
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
+	movlw	1
+	movwf	DIRECTION
+	movlw	10
+	movwf	TIME
+	call	ADDDIRECTION
 	movlw	7
 	movwf	DIRECTION
 	movlw	5
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 	movlw	3
 	movwf	DIRECTION
 	movlw	40
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 	movlw	1
 	movwf	DIRECTION
 	movlw	60
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
 ENDIF5
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	btfsc	STATUS, Z
+	goto	ELSE6_1
 	call	MOVE
+	goto	ENDIF6
+ELSE6_1
+	pagesel	FW
+	call	FW
+	pagesel	$
+ENDIF6
 	movf	FLAMEIN,W
 	movwf	SysWORDTempA
 	movf	FLAMEIN_H,W
@@ -454,18 +460,60 @@ ENDIF5
 	andwf	SysByteTempX,W
 	movwf	SysTemp2
 	btfss	SysTemp2,0
-	goto	ELSE6_1
+	goto	ELSE7_1
 	call	BLOW
+	pagesel	$
 	goto	SysDoLoop_E1
-	goto	ENDIF6
-ELSE6_1
+	goto	ENDIF7
+ELSE7_1
 	bcf	LATA,5
-ENDIF6
+ENDIF7
 	goto	SysDoLoop_S1
 SysDoLoop_E1
 BASPROGRAMEND
 	sleep
 	goto	BASPROGRAMEND
+
+;********************************************************************************
+
+ADDDIRECTION
+	movf	POINTEREND,W
+	subwf	POINTERSTART,W
+	btfss	STATUS, Z
+	goto	ENDIF11
+	movf	OVERFLOWS,W
+	movwf	LASTDIRTIME
+	movf	OVERFLOWS_H,W
+	movwf	LASTDIRTIME_H
+ENDIF11
+	movlw	low(DIRECTIONS)
+	addwf	POINTEREND,W
+	movwf	AFSR0
+	clrf	SysTemp1
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp1,W
+	movwf	AFSR0_H
+	movf	DIRECTION,W
+	movwf	INDF0
+	movlw	low(DIRECTIONTIMES)
+	addwf	POINTEREND,W
+	movwf	AFSR0
+	clrf	SysTemp1
+	movlw	high(DIRECTIONTIMES)
+	addwfc	SysTemp1,W
+	movwf	AFSR0_H
+	movf	TIME,W
+	movwf	INDF0
+	movf	POINTEREND,W
+	movwf	SysBYTETempA
+	movlw	5
+	movwf	SysBYTETempB
+	pagesel	SysDivSub
+	call	SysDivSub
+	pagesel	$
+	incf	SysBYTETempX,W
+	movwf	POINTEREND
+	return
 
 ;********************************************************************************
 
@@ -552,29 +600,7 @@ SysDoLoop_S2
 	call	FN_FLAMECHECK
 	pagesel	$
 	btfss	SYSBITVAR0,5
-	goto	ELSE13_1
-	movlw	low(DIRECTIONS)
-	addwf	POINTERSTART,W
-	movwf	AFSR0
-	clrf	SysTemp2
-	movlw	high(DIRECTIONS)
-	addwfc	SysTemp2,W
-	movwf	AFSR0_H
-	movlw	3
-	subwf	INDF0,W
-	btfss	STATUS, Z
-	goto	ELSE15_1
-	pagesel	TURN_RIGHT
-	call	TURN_RIGHT
-	pagesel	$
-	goto	ENDIF15
-ELSE15_1
-	pagesel	TURN_LEFT
-	call	TURN_LEFT
-	pagesel	$
-ENDIF15
-	goto	ENDIF13
-ELSE13_1
+	goto	ELSE14_1
 	movlw	low(DIRECTIONS)
 	addwf	POINTERSTART,W
 	movwf	AFSR0
@@ -586,6 +612,28 @@ ELSE13_1
 	subwf	INDF0,W
 	btfss	STATUS, Z
 	goto	ELSE16_1
+	pagesel	TURN_RIGHT
+	call	TURN_RIGHT
+	pagesel	$
+	goto	ENDIF16
+ELSE16_1
+	pagesel	TURN_LEFT
+	call	TURN_LEFT
+	pagesel	$
+ENDIF16
+	goto	ENDIF14
+ELSE14_1
+	movlw	low(DIRECTIONS)
+	addwf	POINTERSTART,W
+	movwf	AFSR0
+	clrf	SysTemp2
+	movlw	high(DIRECTIONS)
+	addwfc	SysTemp2,W
+	movwf	AFSR0_H
+	movlw	3
+	subwf	INDF0,W
+	btfss	STATUS, Z
+	goto	ELSE17_1
 	pagesel	TURN_LEFT
 	call	TURN_LEFT
 	pagesel	$
@@ -598,8 +646,8 @@ ELSE13_1
 	movwf	AFSR0_H
 	movlw	4
 	movwf	INDF0
-	goto	ENDIF16
-ELSE16_1
+	goto	ENDIF17
+ELSE17_1
 	pagesel	TURN_RIGHT
 	call	TURN_RIGHT
 	pagesel	$
@@ -612,12 +660,12 @@ ELSE16_1
 	movwf	AFSR0_H
 	movlw	3
 	movwf	INDF0
-ENDIF16
+ENDIF17
 	movf	FLAMEIN,W
 	movwf	MAXFLAME
 	movf	FLAMEIN_H,W
 	movwf	MAXFLAME_H
-ENDIF13
+ENDIF14
 	pagesel	CLS
 	call	CLS
 	pagesel	$
@@ -671,21 +719,22 @@ ENDIF13
 	andwf	SysByteTempX,W
 	movwf	SysTemp3
 	btfss	SysTemp3,0
-	goto	ENDIF14
+	goto	ENDIF15
 	movlw	44
 	addwf	OVERFLOWS,W
 	movwf	FLAMECD
 	movlw	1
 	addwfc	OVERFLOWS_H,W
 	movwf	FLAMECD_H
-ENDIF14
+ENDIF15
 	movlw	20
 	movwf	SysWaitTempMS
 	clrf	SysWaitTempMS_H
 	pagesel	Delay_MS
 	call	Delay_MS
-	pagesel	$
+	pagesel	STOP
 	call	STOP
+	pagesel	$
 	movlw	1
 	movwf	SysWaitTempS
 	pagesel	Delay_S
@@ -718,6 +767,7 @@ SysDoLoop_E2
 	pagesel	Delay_MS
 	call	Delay_MS
 	pagesel	$
+	pagesel	STOP
 	goto	STOP
 
 ;********************************************************************************
@@ -1017,7 +1067,7 @@ MOVE
 	call	SysCompLessThan16
 	pagesel	$
 	btfss	SysByteTempX,0
-	goto	ELSE11_1
+	goto	ELSE12_1
 	movf	POINTERSTART,W
 	movwf	SysBYTETempA
 	movlw	5
@@ -1031,8 +1081,8 @@ MOVE
 	movwf	LASTDIRTIME
 	movf	OVERFLOWS_H,W
 	movwf	LASTDIRTIME_H
-	goto	ENDIF11
-ELSE11_1
+	goto	ENDIF12
+ELSE12_1
 	movlw	low(DIRECTIONS)
 	addwf	POINTERSTART,W
 	movwf	AFSR0
@@ -1042,8 +1092,10 @@ ELSE11_1
 	movwf	AFSR0_H
 	movf	INDF0,F
 	btfss	STATUS, Z
-	goto	ELSE12_1
+	goto	ELSE13_1
+	pagesel	STOP
 	call	STOP
+	pagesel	$
 	movlw	low(DIRECTIONS)
 	addwf	POINTERSTART,W
 	movwf	AFSR0
@@ -1051,11 +1103,11 @@ ELSE11_1
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_1
+	goto	ENDIF13
+ELSE13_1
 	decf	INDF0,W
 	btfss	STATUS, Z
-	goto	ELSE12_2
+	goto	ELSE13_2
 	pagesel	FW
 	call	FW
 	pagesel	$
@@ -1066,11 +1118,11 @@ ELSE12_1
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_2
+	goto	ENDIF13
+ELSE13_2
 	decf	INDF0,W
 	btfss	STATUS, Z
-	goto	ELSE12_3
+	goto	ELSE13_3
 	pagesel	BW
 	call	BW
 	pagesel	$
@@ -1081,12 +1133,12 @@ ELSE12_2
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_3
+	goto	ENDIF13
+ELSE13_3
 	movlw	3
 	subwf	INDF0,W
 	btfss	STATUS, Z
-	goto	ELSE12_4
+	goto	ELSE13_4
 	pagesel	TURN_RIGHT
 	call	TURN_RIGHT
 	pagesel	$
@@ -1097,12 +1149,12 @@ ELSE12_3
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_4
+	goto	ENDIF13
+ELSE13_4
 	movlw	4
 	subwf	INDF0,W
 	btfss	STATUS, Z
-	goto	ELSE12_5
+	goto	ELSE13_5
 	pagesel	TURN_LEFT
 	call	TURN_LEFT
 	pagesel	$
@@ -1113,12 +1165,12 @@ ELSE12_4
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_5
+	goto	ENDIF13
+ELSE13_5
 	movlw	5
 	subwf	INDF0,W
 	btfss	STATUS, Z
-	goto	ELSE12_6
+	goto	ELSE13_6
 	pagesel	SLIGHT_RIGHT
 	call	SLIGHT_RIGHT
 	pagesel	$
@@ -1129,12 +1181,12 @@ ELSE12_5
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_6
+	goto	ENDIF13
+ELSE13_6
 	movlw	6
 	subwf	INDF0,W
 	btfss	STATUS, Z
-	goto	ELSE12_7
+	goto	ELSE13_7
 	pagesel	SLIGHT_LEFT
 	call	SLIGHT_LEFT
 	pagesel	$
@@ -1145,17 +1197,17 @@ ELSE12_6
 	movlw	high(DIRECTIONS)
 	addwfc	SysTemp2,W
 	movwf	AFSR0_H
-	goto	ENDIF12
-ELSE12_7
+	goto	ENDIF13
+ELSE13_7
 	movlw	7
 	subwf	INDF0,W
 	btfss	STATUS, Z
-	goto	ENDIF12
+	goto	ENDIF13
 	pagesel	HARD_STOP
 	call	HARD_STOP
 	pagesel	$
+ENDIF13
 ENDIF12
-ENDIF11
 	return
 
 ;********************************************************************************
@@ -1177,7 +1229,7 @@ PRINT128
 	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF35
+	goto	ENDIF36
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1202,7 +1254,7 @@ PRINT128
 	call	LCDNORMALWRITEBYTE
 	pagesel	$
 	goto	LCDPRINTWORD1000
-ENDIF35
+ENDIF36
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1216,7 +1268,7 @@ ENDIF35
 	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF36
+	goto	ENDIF37
 LCDPRINTWORD1000
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
@@ -1242,7 +1294,7 @@ LCDPRINTWORD1000
 	call	LCDNORMALWRITEBYTE
 	pagesel	$
 	goto	LCDPRINTWORD100
-ENDIF36
+ENDIF37
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1255,7 +1307,7 @@ ENDIF36
 	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF37
+	goto	ENDIF38
 LCDPRINTWORD100
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
@@ -1280,7 +1332,7 @@ LCDPRINTWORD100
 	call	LCDNORMALWRITEBYTE
 	pagesel	$
 	goto	LCDPRINTWORD10
-ENDIF37
+ENDIF38
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
 	movf	LCDVALUE_H,W
@@ -1293,7 +1345,7 @@ ENDIF37
 	pagesel	$
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ENDIF38
+	goto	ENDIF39
 LCDPRINTWORD10
 	movf	LCDVALUE,W
 	movwf	SysWORDTempA
@@ -1317,7 +1369,7 @@ LCDPRINTWORD10
 	pagesel	LCDNORMALWRITEBYTE
 	call	LCDNORMALWRITEBYTE
 	pagesel	$
-ENDIF38
+ENDIF39
 	movlw	48
 	addwf	LCDVALUE,W
 	movwf	LCDBYTE
@@ -1338,7 +1390,7 @@ PRINTDEBUG
 	movf	POINTEREND,W
 	subwf	POINTERSTART,W
 	btfsc	STATUS, C
-	goto	ELSE22_1
+	goto	ELSE23_1
 	clrf	I
 	movf	POINTERSTART,W
 	subwf	POINTEREND,W
@@ -1402,12 +1454,12 @@ SysForLoop2
 	btfsc	SysByteTempX,0
 	goto	SysForLoop2
 SysForLoopEnd2
-	goto	ENDIF22
-ELSE22_1
+	goto	ENDIF23
+ELSE23_1
 	movf	POINTERSTART,W
 	subwf	POINTEREND,W
 	btfsc	STATUS, C
-	goto	ENDIF22
+	goto	ENDIF23
 	clrf	I
 	movf	POINTEREND,W
 	subwf	POINTERSTART,W
@@ -1475,7 +1527,7 @@ SysForLoop3
 	btfsc	SysByteTempX,0
 	goto	SysForLoop3
 SysForLoopEnd3
-ENDIF22
+ENDIF23
 	movlw	1
 	movwf	LCDLINE
 	clrf	LCDCOLUMN
@@ -1489,9 +1541,9 @@ ENDIF22
 	pagesel	PRINT126
 	call	PRINT126
 	pagesel	$
-	movf	WALL1DIST,W
+	movf	WALL1IN,W
 	movwf	LCDVALUE
-	movf	WALL1DIST_H,W
+	movf	WALL1IN_H,W
 	movwf	LCDVALUE_H
 	call	PRINT128
 	pagesel	$
@@ -1502,9 +1554,9 @@ ENDIF22
 	pagesel	PRINT126
 	call	PRINT126
 	pagesel	$
-	movf	WALL2DIST,W
+	movf	WALL2IN,W
 	movwf	LCDVALUE
-	movf	WALL2DIST_H,W
+	movf	WALL2IN_H,W
 	movwf	LCDVALUE_H
 	goto	PRINT128
 
@@ -2177,70 +2229,6 @@ SysWaitLoop2
 
 ;********************************************************************************
 
-STARTTIMER
-	movf	TMRNUMBER,F
-	btfsc	STATUS, Z
-	bsf	T0CON0,T0EN
-	decf	TMRNUMBER,W
-	btfss	STATUS, Z
-	goto	ENDIF54
-	banksel	T1CON
-	bsf	T1CON,TMR1ON
-ENDIF54
-	movlw	2
-	banksel	TMRNUMBER
-	subwf	TMRNUMBER,W
-	btfss	STATUS, Z
-	goto	ENDIF55
-	banksel	T2CON
-	bsf	T2CON,TMR2ON
-ENDIF55
-	movlw	3
-	banksel	TMRNUMBER
-	subwf	TMRNUMBER,W
-	btfss	STATUS, Z
-	goto	ENDIF56
-	banksel	T3CON
-	bsf	T3CON,TMR3ON
-ENDIF56
-	movlw	4
-	banksel	TMRNUMBER
-	subwf	TMRNUMBER,W
-	btfss	STATUS, Z
-	goto	ENDIF57
-	banksel	T4CON
-	bsf	T4CON,TMR4ON
-ENDIF57
-	movlw	5
-	banksel	TMRNUMBER
-	subwf	TMRNUMBER,W
-	btfss	STATUS, Z
-	goto	ENDIF58
-	banksel	T5CON
-	bsf	T5CON,TMR5ON
-ENDIF58
-	movlw	6
-	banksel	TMRNUMBER
-	subwf	TMRNUMBER,W
-	btfss	STATUS, Z
-	goto	ENDIF59
-	banksel	T6CON
-	bsf	T6CON,TMR6ON
-ENDIF59
-	banksel	STATUS
-	return
-
-;********************************************************************************
-
-STOP
-	bcf	LATD,3
-	bcf	LATD,2
-	bcf	LATD,0
-	bcf	LATD,1
-	return
-
-;********************************************************************************
-
 WALLHUG
 	movf	WALL1DIST,W
 	movwf	SysWORDTempA
@@ -2266,36 +2254,31 @@ WALLHUG
 	andwf	SysByteTempX,W
 	movwf	SysTemp1
 	btfss	SysTemp1,0
-	goto	ELSE18_1
+	goto	ELSE19_1
 	pagesel	FN_WALLCHECK
 	call	FN_WALLCHECK
 	pagesel	$
 	btfss	SYSBITVAR0,6
-	goto	ELSE19_1
+	goto	ELSE20_1
 	movlw	5
 	movwf	DIRECTION
 	movlw	10
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
-	goto	ENDIF19
-ELSE19_1
+	goto	ENDIF20
+ELSE20_1
 	movlw	2
 	movwf	IMMUNE
-	movlw	255
-	movwf	MINWALL
-	movwf	MINWALL_H
+	clrf	MINWALL
+	clrf	MINWALL_H
 	movlw	1
 	movwf	DIRECTION
 	movlw	20
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
-ENDIF19
-	goto	ENDIF18
-ELSE18_1
+ENDIF20
+	goto	ENDIF19
+ELSE19_1
 	movf	WALL1DIST,W
 	movwf	SysWORDTempB
 	movf	WALL1DIST_H,W
@@ -2320,36 +2303,31 @@ ELSE18_1
 	andwf	SysByteTempX,W
 	movwf	SysTemp1
 	btfss	SysTemp1,0
-	goto	ELSE18_2
+	goto	ELSE19_2
 	pagesel	FN_WALLCHECK
 	call	FN_WALLCHECK
 	pagesel	$
 	btfss	SYSBITVAR0,6
-	goto	ELSE20_1
+	goto	ELSE21_1
 	movlw	6
 	movwf	DIRECTION
 	movlw	10
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
-	goto	ENDIF20
-ELSE20_1
+	goto	ENDIF21
+ELSE21_1
 	movlw	1
 	movwf	IMMUNE
-	movlw	255
-	movwf	MINWALL
-	movwf	MINWALL_H
+	clrf	MINWALL
+	clrf	MINWALL_H
 	movlw	1
 	movwf	DIRECTION
 	movlw	20
 	movwf	TIME
-	pagesel	ADDDIRECTION
 	call	ADDDIRECTION
-	pagesel	$
-ENDIF20
-	goto	ENDIF18
-ELSE18_2
+ENDIF21
+	goto	ENDIF19
+ELSE19_2
 	movf	WALL1DIST,W
 	movwf	SysWORDTempB
 	movf	WALL1DIST_H,W
@@ -2382,57 +2360,25 @@ ELSE18_2
 	pagesel	FW
 	call	FW
 	pagesel	$
-ENDIF18
+ENDIF19
 	return
 
 ;********************************************************************************
 
 ;Start of program memory page 1
 	ORG	2048
-ADDDIRECTION
-	movf	POINTEREND,W
-	subwf	POINTERSTART,W
-	btfss	STATUS, Z
-	goto	ENDIF10
-	movf	OVERFLOWS,W
-	movwf	LASTDIRTIME
-	movf	OVERFLOWS_H,W
-	movwf	LASTDIRTIME_H
-ENDIF10
-	movlw	low(DIRECTIONS)
-	addwf	POINTEREND,W
-	movwf	AFSR0
-	clrf	SysTemp1
-	movlw	high(DIRECTIONS)
-	addwfc	SysTemp1,W
-	movwf	AFSR0_H
-	movf	DIRECTION,W
-	movwf	INDF0
-	movlw	low(DIRECTIONTIMES)
-	addwf	POINTEREND,W
-	movwf	AFSR0
-	clrf	SysTemp1
-	movlw	high(DIRECTIONTIMES)
-	addwfc	SysTemp1,W
-	movwf	AFSR0_H
-	movf	TIME,W
-	movwf	INDF0
-	movf	POINTEREND,W
-	movwf	SysBYTETempA
-	movlw	5
-	movwf	SysBYTETempB
-	call	SysDivSub
-	incf	SysBYTETempX,W
-	movwf	POINTEREND
-	return
-
-;********************************************************************************
-
 BW
 	bcf	LATD,3
 	bsf	LATD,2
 	bcf	LATD,0
 	bsf	LATD,1
+	return
+
+;********************************************************************************
+
+CLEARQUEUE
+	movf	POINTERSTART,W
+	movwf	POINTEREND
 	return
 
 ;********************************************************************************
@@ -2514,14 +2460,14 @@ FN_FLAMECHECK
 	movwf	SysWORDTempB_H
 	call	SysCompLessThan16
 	btfss	SysByteTempX,0
-	goto	ELSE17_1
+	goto	ELSE18_1
 	bsf	SYSBITVAR0,5
 	movf	FLAMEIN,W
 	movwf	MAXFLAME
 	movf	FLAMEIN_H,W
 	movwf	MAXFLAME_H
-	goto	ENDIF17
-ELSE17_1
+	goto	ENDIF18
+ELSE18_1
 	movf	FLAMEIN,W
 	movwf	SysWORDTempA
 	movf	FLAMEIN_H,W
@@ -2551,12 +2497,12 @@ ELSE17_1
 	call	SysCompLessThan16
 	comf	SysByteTempX,F
 	btfss	SysByteTempX,0
-	goto	ELSE17_2
+	goto	ELSE18_2
 	bsf	SYSBITVAR0,5
-	goto	ENDIF17
-ELSE17_2
+	goto	ENDIF18
+ELSE18_2
 	bcf	SYSBITVAR0,5
-ENDIF17
+ENDIF18
 	return
 
 ;********************************************************************************
@@ -2587,12 +2533,12 @@ INITTIMER0171
 	iorwf	TMRPRES,F
 	decf	TMRSOURCE,W
 	btfsc	STATUS, Z
-	goto	ELSE60_1
+	goto	ELSE61_1
 	bsf	TMRPOST,5
-	goto	ENDIF60
-ELSE60_1
+	goto	ENDIF61
+ELSE61_1
 	bcf	TMRPOST,5
-ENDIF60
+ENDIF61
 	movf	TMRPRES,W
 	movwf	T0CON1
 	movlw	224
@@ -2687,20 +2633,20 @@ DelayUS15
 	decfsz	DELAYTEMP,F
 	goto	DelayUS15
 	btfsc	PORTB,0
-	goto	ENDIF50
+	goto	ENDIF51
 	movlw	16
 	subwf	LCDBYTE,W
 	btfsc	STATUS, C
-	goto	ENDIF51
+	goto	ENDIF52
 	movf	LCDBYTE,W
 	sublw	7
 	btfsc	STATUS, C
-	goto	ENDIF52
+	goto	ENDIF53
 	movf	LCDBYTE,W
 	movwf	LCD_STATE
+ENDIF53
 ENDIF52
 ENDIF51
-ENDIF50
 	return
 
 ;********************************************************************************
@@ -2724,10 +2670,10 @@ FN_LCDREADY
 	call	Delay_10US
 	bsf	TRISB,7
 	btfsc	PORTB,7
-	goto	ENDIF39
+	goto	ENDIF40
 	movlw	255
 	movwf	LCDREADY
-ENDIF39
+ENDIF40
 	bcf	LATB,2
 	movlw	25
 	movwf	SysWaitTemp10US
@@ -2744,12 +2690,12 @@ LOCATE
 	movf	LCDLINE,W
 	sublw	1
 	btfsc	STATUS, C
-	goto	ENDIF29
+	goto	ENDIF30
 	movlw	2
 	subwf	LCDLINE,F
 	movlw	16
 	addwf	LCDCOLUMN,F
-ENDIF29
+ENDIF30
 	movf	LCDLINE,W
 	movwf	SysBYTETempA
 	movlw	64
@@ -2812,7 +2758,7 @@ PRINT127
 	movlw	100
 	subwf	LCDVALUE,W
 	btfss	STATUS, C
-	goto	ENDIF33
+	goto	ENDIF34
 	movf	LCDVALUE,W
 	movwf	SysBYTETempA
 	movlw	100
@@ -2826,7 +2772,7 @@ PRINT127
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
 	call	LCDNORMALWRITEBYTE
-ENDIF33
+ENDIF34
 	movf	LCDVALUETEMP,W
 	movwf	SysBYTETempB
 	clrf	SysBYTETempA
@@ -2843,7 +2789,7 @@ ENDIF33
 	iorwf	SysByteTempX,W
 	movwf	SysTemp1
 	btfss	SysTemp1,0
-	goto	ENDIF34
+	goto	ENDIF35
 	movf	LCDVALUE,W
 	movwf	SysBYTETempA
 	movlw	10
@@ -2857,7 +2803,7 @@ ENDIF33
 	addwf	LCDVALUETEMP,W
 	movwf	LCDBYTE
 	call	LCDNORMALWRITEBYTE
-ENDIF34
+ENDIF35
 	movlw	48
 	addwf	LCDVALUE,W
 	movwf	LCDBYTE
@@ -2878,6 +2824,70 @@ SLIGHT_RIGHT
 	bcf	LATD,3
 	bcf	LATD,2
 	bsf	LATD,0
+	bcf	LATD,1
+	return
+
+;********************************************************************************
+
+STARTTIMER
+	movf	TMRNUMBER,F
+	btfsc	STATUS, Z
+	bsf	T0CON0,T0EN
+	decf	TMRNUMBER,W
+	btfss	STATUS, Z
+	goto	ENDIF55
+	banksel	T1CON
+	bsf	T1CON,TMR1ON
+ENDIF55
+	movlw	2
+	banksel	TMRNUMBER
+	subwf	TMRNUMBER,W
+	btfss	STATUS, Z
+	goto	ENDIF56
+	banksel	T2CON
+	bsf	T2CON,TMR2ON
+ENDIF56
+	movlw	3
+	banksel	TMRNUMBER
+	subwf	TMRNUMBER,W
+	btfss	STATUS, Z
+	goto	ENDIF57
+	banksel	T3CON
+	bsf	T3CON,TMR3ON
+ENDIF57
+	movlw	4
+	banksel	TMRNUMBER
+	subwf	TMRNUMBER,W
+	btfss	STATUS, Z
+	goto	ENDIF58
+	banksel	T4CON
+	bsf	T4CON,TMR4ON
+ENDIF58
+	movlw	5
+	banksel	TMRNUMBER
+	subwf	TMRNUMBER,W
+	btfss	STATUS, Z
+	goto	ENDIF59
+	banksel	T5CON
+	bsf	T5CON,TMR5ON
+ENDIF59
+	movlw	6
+	banksel	TMRNUMBER
+	subwf	TMRNUMBER,W
+	btfss	STATUS, Z
+	goto	ENDIF60
+	banksel	T6CON
+	bsf	T6CON,TMR6ON
+ENDIF60
+	banksel	STATUS
+	return
+
+;********************************************************************************
+
+STOP
+	bcf	LATD,3
+	bcf	LATD,2
+	bcf	LATD,0
 	bcf	LATD,1
 	return
 
@@ -2984,11 +2994,11 @@ SYSDIVSUB16
 	clrf	SysWORDTempB_H
 	call	SysCompEqual16
 	btfss	SysByteTempX,0
-	goto	ENDIF61
+	goto	ENDIF62
 	clrf	SYSWORDTEMPA
 	clrf	SYSWORDTEMPA_H
 	return
-ENDIF61
+ENDIF62
 	movlw	16
 	movwf	SYSDIVLOOP
 SYSDIV16START
@@ -3003,13 +3013,13 @@ SYSDIV16START
 	subwfb	SYSDIVMULTX_H,F
 	bsf	SYSDIVMULTA,0
 	btfsc	STATUS,C
-	goto	ENDIF62
+	goto	ENDIF63
 	bcf	SYSDIVMULTA,0
 	movf	SYSDIVMULTB,W
 	addwf	SYSDIVMULTX,F
 	movf	SYSDIVMULTB_H,W
 	addwfc	SYSDIVMULTX_H,F
-ENDIF62
+ENDIF63
 	decfsz	SYSDIVLOOP, F
 	goto	SYSDIV16START
 	movf	SYSDIVMULTA,W
@@ -3122,9 +3132,9 @@ TURN_RIGHT
 ;********************************************************************************
 
 FN_WALLCHECK
-	movf	WALL1DIST,W
+	movf	WALL1IN,W
 	movwf	SysWORDTempA
-	movf	WALL1DIST_H,W
+	movf	WALL1IN_H,W
 	movwf	SysWORDTempA_H
 	movf	MINWALL,W
 	movwf	SysWORDTempB
@@ -3132,16 +3142,16 @@ FN_WALLCHECK
 	movwf	SysWORDTempB_H
 	call	SysCompLessThan16
 	btfss	SysByteTempX,0
-	goto	ELSE63_1
+	goto	ELSE64_1
 	bsf	SYSBITVAR0,6
-	movf	WALL1DIST,W
+	movf	WALL1IN,W
 	movwf	MINWALL
-	movf	WALL1DIST_H,W
+	movf	WALL1IN_H,W
 	movwf	MINWALL_H
-	goto	ENDIF63
-ELSE63_1
+	goto	ENDIF64
+ELSE64_1
 	bcf	SYSBITVAR0,6
-ENDIF63
+ENDIF64
 	return
 
 ;********************************************************************************
