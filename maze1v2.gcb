@@ -1,0 +1,363 @@
+#Chip 16f18875, 32
+
+' motors
+#Define RF PortD.3
+#Define RB PortD.2
+#Define LF PortD.0
+#Define LB PortD.1
+
+Dir RF Out
+Dir RB Out
+Dir LF Out
+Dir LB Out
+
+' sensor input
+#define LINE PortA.1
+#define FLAME ANA2
+#define WALL1 ANA3
+#define WALL2 ANA4
+
+Dir LINE In
+Dir PortA.2 In
+Dir PortA.3 In
+Dir PortA.4 In
+
+Dim flameIn as Word
+Dim Wall1In as Word
+Dim Wall1Dist as Word
+Dim Wall2In as Word
+Dim Wall2Dist as Word
+
+#define FAN PortA.5
+dir FAN out
+
+' LCD
+#define LCD_IO 4
+#define LCD_RS PortB.0
+#define LCD_RW PortB.1
+#define LCD_Enable PortB.2
+#define LCD_DB4 PortB.4
+#define LCD_DB5 PortB.5
+#define LCD_DB6 PortB.6
+#define LCD_DB7 PortB.7
+#define LCD_LINES 2
+#define LCD_WIDTH 16
+#define LCD_SPEED Fast
+
+dir LCD_RS out
+dir LCD_RW out
+dir LCD_Enable out
+dir LCD_DB4 out
+dir LCD_DB5 out
+dir LCD_DB6 out
+dir LCD_DB7 out
+
+' timer outside of main loop
+dim overflows as word
+overflows = 0
+
+#define TMR0_8bit ' 8-bit mode
+InitTimer0 Osc, PRE0_1 + TMR0_LFINTOSC, POST0_2 ' slow ahh clock (31kHz)
+T016BIT = 0
+TMR0H = 160
+TMR0L = 0 ' counter
+StartTimer 0 ' start timer
+
+on interrupt Timer0Overflow call timerOverflow
+
+sub timerOverflow
+    overflows = overflows + 1
+end sub
+
+' simplest motor directions
+RF = 0
+RB = 0
+LF = 0
+LB = 0
+
+Sub stop ()
+    RF = 0
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+Sub fw ()
+    RF = 1
+    RB = 0
+    LF = 1
+    LB = 0
+End Sub
+
+Sub bw ()
+    RF = 0
+    RB = 1
+    LF = 0
+    LB = 1
+End Sub
+
+Sub turn_right ()
+    RF = 0
+    RB = 1
+    LF = 1
+    LB = 0
+End Sub
+
+Sub turn_left ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 1
+End Sub
+
+Sub slight_right ()
+    RF = 0
+    RB = 0
+    LF = 1
+    LB = 0
+End Sub
+
+Sub slight_left ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+' direction variable for queue sys
+
+dim direction as Byte
+direction = 1
+' stop = 0, fw = 1, bw = 2, r = 3, l = 4, s_r = 5 s_l = 6
+
+dim directionTime as Word
+directionTime = 0
+
+// next direction
+dim direction2 as Byte
+direction2 = 5
+
+dim directionTime2 as Word
+directionTime2 = 0
+
+#define dirQueueLen 5
+dim directions(dirQueueLen) as Byte
+dim directionTimes(dirQueueLen) as Byte
+
+for i = 1 to dirQueueLen
+    directions(i) = 0
+    directionTimes(i) = 0
+next
+
+dim pointerStart as Byte
+pointerStart = 0
+dim pointerEnd as Byte
+pointerEnd = 0
+
+dim lastDirTime as Word
+lastDirTime = 0
+
+dim refreshTime as Word
+refreshTime = 0
+
+dim lineOn as Bit
+dim prevLineOn as Bit
+dim lineCount as Byte
+lineCount = 0
+lineOn = 1
+prevLineOn = 1
+
+dim lastFlame as Word
+lastFlame = 0
+dim maxFlame as word
+maxFlame = 0
+
+sub addDirection(direction as byte, time as byte)
+    if pointerStart = pointerEnd then
+        lastDirTime = overflows
+    end if
+    pointerEnd = (pointerEnd + 1) % dirQueueLen
+    directions(pointerEnd) = direction
+    directionTimes(pointerEnd) = time
+end sub
+
+sub move
+    if directionTimes(pointerStart) + lastDirTime > overflows then
+        pointerStart = (pointerStart + 1) % dirQueueLen
+        lastDirTime = overflows
+
+    else
+        if direction(pointerStart) = 1 then
+            gosub fw
+        else if direction(pointerStart) = 3 then
+            gosub turn_right
+        else if direction(pointerStart) = 4 then
+            gosub turn_left
+        else if direction(pointerStart) = 5 then
+            gosub slight_right
+        else if direction(pointerStart) = 6 then
+            gosub slight_left
+        end if
+    end if
+end sub
+
+' actions
+
+sub celebrate ()
+
+sub blow ()
+
+sub scanRoom ()
+    ' turn left until Wall1Dist starts increasing
+    ' turn 185 degrees right
+    ' constant check for max flame
+    direction = 4
+
+
+Sub wallHug ()
+    if Wall1Dist > 40 then
+        direction = 4
+        directionTime = overflows + 39
+        direction2 = 1
+        directionTime2 = 50
+    else if Wall2Dist < 20 then
+        direction = 3
+        directionTime = overflows + 10
+    else if Wall1Dist < 6 then
+        direction = 3
+        directionTime = overflows + (12 - Wall1Dist) / 3
+        direction2 = 1
+        directionTime2 = 50
+    else if Wall1Dist > 22 then
+        direction = 4
+        directionTime = overflows + Wall1Dist / 5
+        direction2 = 1
+        directionTime2 = 50
+    else
+        direction = 1
+    end if
+
+End Sub
+
+'GOSUB fw
+do
+    lineOn = LINE
+    if lineOn = 0 and prevLineOn = 1 Then
+        ' catch rising edge of line
+        lineCount = lineCount + 1
+        if lineCount & 1 = 1 then
+            gosub fw
+            wait 750 ms
+            direction = 3
+            directionTime = overflows + 50
+            direction2 = 1
+            directionTime2 = 100
+        end if
+    end if
+    prevLineOn = lineOn
+
+    Wall1In = ReadAD(WALL1) 
+    Wall1Dist = ( (6787 / (Wall1In - 3)) - 4) / 5
+    Wall2In = ReadAD(WALL2) 
+    Wall2Dist = ( (6787 / (Wall2In - 3)) - 4) / 5
+    flameIn = ReadAD10(FLAME)
+    
+    if refreshTime < overflows then
+        CLS
+        Locate 0, 0
+        Print "L "
+        Print lineCount
+        print " "
+        print Wall1Dist
+        print " "
+        print wall2Dist
+        Locate 1, 0
+        print "F "
+        print flameIn
+        print "D "
+        print direction
+
+        refreshTime = overflows + 10
+    end if
+
+    ' wall hug
+    if directionTime < overflows and direction2 = 5 then
+        if Wall1Dist > 40 then
+            direction = 4
+            directionTime = overflows + 38
+            direction2 = 1
+            directionTime2 = 60
+        else if Wall2Dist < 22 then
+            direction = 3
+            directionTime = overflows + 10
+        else if Wall1Dist < 5 then
+            direction = 3
+            directionTime = overflows + (14 - Wall1Dist) / 3
+            direction2 = 1
+            directionTime2 = 30
+        else if Wall1Dist > 20 then
+            direction = 4
+            directionTime = overflows + Wall1Dist / 3 
+            direction2 = 1
+            directionTime2 = Wall1Dist
+        else
+            direction = 1
+        end if
+    else if directionTime < overflows and direction2 <> 5 then
+        direction = direction2
+        directionTime = overflows + directionTime2
+        direction2 = 5
+    end if
+
+    if direction = 3 then
+        gosub turn_right
+    else if direction = 4 then
+        gosub turn_left
+    else if direction = 1 then
+        gosub fw
+    end if
+    
+
+    if flameIn < 20 and Wall2Dist < 30 then
+        fan = 1
+        CLS
+        Locate 0, 0
+        Print "EXTINGUISHING"
+        Locate 1, 0
+        Print flameIn
+        do until flameIn > 800 
+            gosub turn_right
+            wait 100 ms
+            gosub turn_left
+            wait 100 ms
+            flameIn = ReadAD10(FLAME)
+            CLS
+            Locate 0, 0
+            Print "EXTINGUISHING"
+            Locate 1, 0
+            Print flameIn
+        loop
+        wait 3 s
+
+        fan = 0
+        CLS
+        Locate 0, 0
+        Print "#1 VICTORY ROYALE"
+        gosub turn_right
+        wait 1 s
+        gosub stop
+        EXIT Do
+    else if flameIn < 500 and lineCount & 1 = 1 Then
+        ' if flameIn > maxFlame then
+            maxFlame = flameIn
+            lastFlame = flameIn
+            ' direction = 1
+            directionTime = overflows
+            ' direction2 = 5
+        ' else if flameIn - 10 < maxFlame
+            
+        ' end if
+    else
+        fan = 0
+    end if
+loop
