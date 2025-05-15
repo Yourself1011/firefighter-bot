@@ -138,8 +138,8 @@ prevLineOn = 1
 
 dim lastFlame as Word
 lastFlame = 0
-dim maxFlame as word
-maxFlame = 65535
+dim minFlame as word
+minFlame = 65535
 dim check1 as Bit
 check1 = 0
 
@@ -149,8 +149,11 @@ searchCd = 0
 dim flameCd as word
 flameCd = 0
 
+dim gapCd as word
+gapCd = 0
+
 ' stop = 0, fw = 1, bw = 2, r = 3, l = 4, s_r = 5, s_l = 6, hard stop = 7
-#define dirQueueLen 5
+#define dirQueueLen 6
 dim directions(dirQueueLen) as Byte
 dim directionTimes(dirQueueLen) as Byte
 dim i as byte
@@ -172,11 +175,21 @@ roomChecked = 1
 dim flameFound as bit
 flameFound = 0
 
+dim maxWall as word
+maxWall = 0
 dim minWall as word
 minWall = 0
 dim immune as byte
 ' left = 1, right = 2
 immune = 0
+
+dim gaps as byte
+gaps = 0
+dim gapFlag as Bit
+gapFlag = 0
+
+dim leftTurns as byte
+leftTurns = 0
 
 ' direction queue logic
 sub addDirection(direction as byte, time as byte)
@@ -226,14 +239,17 @@ end function
 
 sub blow ()
     fan = 1
+
     CLS
     Locate 0, 0
     Print "EXTINGUISHING"
     Locate 1, 0
     Print flameIn
+
     directions(pointerStart) = 3
-    maxFlame = flameIn
-    do until overflows > flameCd and flameIn > 800 
+    minFlame = flameIn
+
+    do until overflows > flameCd and flameIn > 800
         flameIn = ReadAD10(FLAME)
         if flameCheck = 1 then
             if directions(pointerStart) = 3 then
@@ -249,23 +265,39 @@ sub blow ()
                 turn_right
                 directions(pointerStart) = 3
             end if
-            maxFlame = flameIn
-        end if
-        ' turn_right
-        ' wait 100 ms
-        ' turn_left
-        ' wait 100 ms
+            minFlame = flameIn
+        end If
+
         CLS
         Locate 0, 0
         Print "EXTINGUISHING"
         Locate 1, 0
         Print flameIn
+        print " "
+        print fan
+
         if flameIn > 800 and flameCd = 0 then
+            if directions(pointerStart) = 3 then
+                turn_left
+            else
+                turn_right
+            end if
+            wait 40 ms
+            stop
+            wait 2 s
             flameCd = overflows + 300
+            CLS
+            Locate 0, 0
+            Print "Edging"
+            Locate 1, 0
+            Print flameIn
         end if
         wait 20 ms
         stop
         wait 1 s
+        if flameIn < 800 then
+            flameCd = 0
+        end if
     loop
 
     fan = 0
@@ -278,10 +310,10 @@ sub blow ()
 end sub
 
 function flameCheck as bit
-    if flameIn < maxFlame then 'and flameIn < 100 then
+    if flameIn < minFlame then 'and flameIn < 100 then
         flameCheck = 1
-        maxFlame = flameIn
-    else if flameIn + flameIn / 10 <= maxFlame then
+        minFlame = flameIn
+    else if flameIn - flameIn / 10 <= minFlame then
         flameCheck = 1
     else
         flameCheck = 0
@@ -289,37 +321,66 @@ function flameCheck as bit
 end function
 
 function wallCheck as bit
-    if wall1In < minWall then 'and flameIn < 100 then
+    if wall1In > maxWall then 'and flameIn < 100 then
         wallCheck = 1
-        minWall = wall1In
+        maxWall = wall1In
+    else if wall1In + 2 >= maxWall then
+        wallCheck = 1
     else
         wallCheck = 0
+        maxWall = wall1In
+    end if
+end function
+
+function wallCheckMin as bit
+    if wall1In < minWall then 'and flameIn < 100 then
+        wallCheckMin = 1
+        minWall = wall1In
+    else if wall1In <= minWall then
+        wallCheckMin = 1
+    else
+        wallCheckMin = 0
+        minWall = wall1In
     end if
 end function
 
 Sub wallHug ()
-    if Wall1Dist < 9 and immune <> 2 then
+    if Wall1Dist < 11 and lineCount <> 5 then
         ' turn slightly right
         if wallCheck = 1 then
-            addDirection(5, 10)
+            addDirection(5, 8)
+            addDirection(1, 7)
         else
-            immune = 2
-            minWall = 0
+            ' immune = 2
+            ' maxWall = 0
+            ' minWall = 65535
             addDirection(1, 20)
         end if
-    else if Wall1Dist > 15 and immune <> 1 then
-        ' turn slightly left
+    else if (wall1Dist < 9 and lineCount = 5) then
         if wallCheck = 1 then
-            addDirection(6, 10)
+            addDirection(5, 4)
+            addDirection(1, 7)
         else
-            immune = 1
-            minWall = 0
+            ' immune = 2
+            ' maxWall = 0
+            ' minWall = 65535
+            addDirection(1, 20)
+        end if
+    else if (Wall1Dist > 15 and lineCount <> 5) or (wall1Dist > 13 and lineCount = 5) then
+        ' turn slightly left
+        if wallCheckMin = 1 then
+            addDirection(6, 9)
+            addDirection(1, 13)
+        else
+            ' immune = 1
+            ' maxWall = 0
+            ' minWall = 65535
             addDirection(1, 20)
         end if
     else
-        if wall1Dist <= 15 and wall1Dist >= 9 then
-            immune = 0
-        end if
+        ' if wall1Dist <= 14 and wall1Dist >= 9 then
+        '     immune = 0
+        ' end if
         gosub fw
     end if
 End Sub
@@ -356,20 +417,58 @@ sub printDebug
     ' print lastDirTime 
     ' print " "
     ' print overflows
-    ' Print "L "
-    ' Print lineCount
+    Print "L"
+    Print lineCount
     ' print " "
-    ' print "F:"
-    ' print flameIn
+    print "F"
+    print flameIn
+    ' print "G"
+    ' print gaps
+    print "T"
+    print leftTurns
     ' print "MF:"
-    ' print maxFlame
+    ' print minFlame
+    ' print " "
+    ' print Wall1In
+    ' print " "
+    ' print wall2In
     print " "
-    print Wall1In
+    print Wall1Dist
     print " "
-    print wall2In
+    print wall2Dist
     ' Locate 1, 0
     ' print "D "
     ' print directions(pointerStart)
+end sub
+
+sub bigLeft
+    leftTurns = leftTurns + 1
+    if lineCount = 6 and leftTurns = 2 then
+        clearQueue
+        addDirection(7, 10)
+        addDirection(5, 8)
+        addDirection(1, 95)
+    ' else if lineCount = 6 and gaps = 1 then
+    '     clearQueue
+    '     addDirection(1, 15)
+    '     addDirection(7, 10)
+    '     addDirection(4, 30)
+    '     addDirection(1, 75)
+    else 
+        clearQueue
+        addDirection(1, 15)
+        addDirection(7, 10)
+        addDirection(4, 30)
+        addDirection(7, 10)
+        if lineCount = 6 and leftTurns = 1 then
+            addDirection(1, 78)
+        else
+            addDirection(1, 75)
+        end if
+    end if
+    immune = 0
+    maxWall = 0
+    minWall = 65535
 end sub
 
 'fw
@@ -384,13 +483,23 @@ do
         ' catch rising edge of line
         lineCount = lineCount + 1
 
-
         if lineCount & 1 = 1 then
             roomChecked = 0
             searchCd = overflows + 75
+            addDirection(1, 17)
+        end if
+        if lineCount = 6 then
+            gapCd = overflows + 150
+            leftTurns = 0
         end if
     end if
     prevLineOn = lineOn
+
+    if gapCd < overflows and lineCount = 6 then
+        gaps = 0
+        gapFlag = 1
+        gapCd = 65535
+    end if
 
     ' if roomChecked = 0 and overflows > searchCd then
     '     roomChecked = 1
@@ -409,38 +518,46 @@ do
     end if
 
     ' wall hug
+    if gapFlag = 0 and wall1Dist > 30 then
+        gapFlag = 1
+        gaps += 1
+    else if wall1Dist < 27 then
+        gapFlag = 0
+    end if
     if pointerStart = pointerEnd Then
         wallHug
+        if Wall1Dist > 35 then
+            ' big space to left, turn 90 degrees
+            bigLeft
+        else if Wall2Dist < 23 then
+            ' wall in front, turn 90 degrees right
+            clearQueue
+            addDirection(7, 10)
+            addDirection(3, 31)
+            addDirection(7, 10)
+            addDirection(1, 55)
+            immune = 0
+            maxWall = 0
+            minWall = 65535
+            gapFlag = 0
+        end if 
     end if
-    if Wall1Dist > 40 then
-        ' big space to left, turn 90 degrees
-        clearQueue
-        addDirection(1, 10)
-        addDirection(7, 5)
-        addDirection(4, 40)
-        addDirection(1, 60)
-    else if Wall2Dist < 20 then
-        ' wall in front, turn 90 degrees right
-        clearQueue
-        addDirection(1, 10)
-        addDirection(1, 10)
-        addDirection(7, 5)
-        addDirection(3, 40)
-        addDirection(1, 60)
-    end if 
     if pointerStart <> pointerEnd then
         move
+        if directions(pointerStart) = 3 and Wall1Dist > 35 then
+            bigLeft
+        end if
     else
         fw
     end if
 
-    if flameIn < 25 and Wall2Dist < 20 then
+    if flameIn < 40 and Wall2Dist < 25 and lineCount & 1 = 1 then
         blow
         EXIT Do
     ' else if flameIn < 500 and flameFound = 0 then
     '     flameFound = 1
     '     clearQueue
-    '     maxFlame = flameIn
+    '     minFlame = flameIn
     '     addDirection(1, 2)
     ' else if flameIn < 500 and pointerStart = pointerEnd and lineCount & 1 = 1 Then
     '     ' hard_stop
@@ -464,7 +581,7 @@ do
     '             addDirection(0, 2)
     '         end if
     '         ' TEMP
-    '         maxFlame = ReadAD10(FLAME)
+    '         minFlame = ReadAD10(FLAME)
     '     end if
 
         ' if flameCheck Then

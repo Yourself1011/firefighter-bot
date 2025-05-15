@@ -1,0 +1,110 @@
+#Chip 16f18875, 32
+#option Explicit
+
+#Define RF PortD.3
+#Define RB PortD.2
+#Define LF PortD.0
+#Define LB PortD.1
+
+Dir RF Out
+Dir RB Out
+Dir LF Out
+Dir LB Out
+
+
+#define LCD_IO 4
+#define LCD_RS PortB.0
+#define LCD_RW PortB.1
+#define LCD_Enable PortB.2
+#define LCD_DB4 PortB.4
+#define LCD_DB5 PortB.5
+#define LCD_DB6 PortB.6
+#define LCD_DB7 PortB.7
+#define LCD_LINES 2
+#define LCD_WIDTH 16
+#define LCD_SPEED Fast
+
+dir LCD_RS out
+dir LCD_RW out
+dir LCD_Enable out
+dir LCD_DB4 out
+dir LCD_DB5 out
+dir LCD_DB6 out
+dir LCD_DB7 out
+
+RF = 0
+RB = 0
+LF = 0
+LB = 0
+
+Sub stop ()
+    RF = 0
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+Sub fw ()
+    RF = 1
+    RB = 0
+    LF = 1
+    LB = 0
+End Sub
+
+Sub bw ()
+    RF = 0
+    RB = 1
+    LF = 0
+    LB = 1
+End Sub
+
+Sub turn_right ()
+    RF = 0
+    RB = 1
+    LF = 1
+    LB = 0
+End Sub
+
+Sub turn_left ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 1
+End Sub
+
+Sub slight_right ()
+    RF = 0
+    RB = 0
+    LF = 1
+    LB = 0
+End Sub
+
+Sub slight_left ()
+    RF = 1
+    RB = 0
+    LF = 0
+    LB = 0
+End Sub
+
+Sub hard_stop ()
+    RF = 1
+    RB = 1
+    LF = 1
+    LB = 1
+End Sub
+
+dim i as word
+for i = 10 to 1000 step 25
+    cls
+    locate 0, 0
+    print i 
+
+    turn_right
+    wait i ms
+    hard_stop
+    wait 1 s
+    turn_left
+    wait i ms
+    hard_stop
+    wait 2 s
+next
